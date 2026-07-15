@@ -132,3 +132,11 @@ scheduler:
 storage:
   database: data/hvac.sqlite3
   csv_fallback: out/hvac.csv
+
+# Daily M&A sweep queries (scripts/deal_watch.py)
+deal_watch:
+  queries:
+    - 'hvac company acquisition'
+    - 'hvac company acquired'
+    - '"home services" hvac "private equity"'
+    - 'mechanical services company acquisition'

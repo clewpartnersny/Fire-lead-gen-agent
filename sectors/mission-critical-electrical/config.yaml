@@ -130,3 +130,11 @@ scheduler:
 storage:
   database: data/mission-critical-electrical.sqlite3
   csv_fallback: out/mission-critical-electrical.csv
+
+# Daily M&A sweep queries (scripts/deal_watch.py)
+deal_watch:
+  queries:
+    - 'electrical contractor acquisition'
+    - '"data center" contractor acquired'
+    - '"mission critical" electrical acquisition'
+    - 'electrical contractor "private equity"'

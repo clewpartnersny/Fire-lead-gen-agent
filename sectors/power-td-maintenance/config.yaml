@@ -131,3 +131,11 @@ scheduler:
 storage:
   database: data/power-td-maintenance.sqlite3
   csv_fallback: out/power-td-maintenance.csv
+
+# Daily M&A sweep queries (scripts/deal_watch.py)
+deal_watch:
+  queries:
+    - 'utility contractor acquisition'
+    - '"transmission and distribution" acquired'
+    - 'power line contractor acquisition'
+    - 'utility services "private equity"'

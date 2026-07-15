@@ -229,3 +229,11 @@ scheduler:
 storage:
   database: data/fire-protection.sqlite3
   csv_fallback: out/fire-protection.csv
+
+# Daily M&A sweep queries (scripts/deal_watch.py)
+deal_watch:
+  queries:
+    - '"fire protection" acquisition'
+    - '"fire and life safety" acquired'
+    - '"fire protection" "private equity"'
+    - '"fire safety" company acquisition'

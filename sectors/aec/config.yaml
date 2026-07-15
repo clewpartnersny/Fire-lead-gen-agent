@@ -132,3 +132,11 @@ scheduler:
 storage:
   database: data/aec.sqlite3
   csv_fallback: out/aec.csv
+
+# Daily M&A sweep queries (scripts/deal_watch.py)
+deal_watch:
+  queries:
+    - 'engineering firm acquisition'
+    - 'architecture firm acquired'
+    - '"engineering firm" "private equity"'
+    - 'engineering consulting merger'

@@ -126,3 +126,11 @@ scheduler:
 storage:
   database: data/ria.sqlite3
   csv_fallback: out/ria.csv
+
+# Daily M&A sweep queries (scripts/deal_watch.py)
+deal_watch:
+  queries:
+    - 'ria acquisition wealth'
+    - '"wealth management" firm acquired'
+    - '"registered investment advisor" "private equity"'
+    - 'ria merger advisor'
