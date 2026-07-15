@@ -1,0 +1,11 @@
+services:
+  fire-leadgen:
+    build: .
+    restart: unless-stopped        # <- this is what makes it truly 24/7
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+      - ./out:/app/out
+      - ./config:/app/config
+      # mount your Google service-account key at the path set in .env
+      - ./service_account.json:/app/service_account.json:ro

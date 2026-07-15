@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fire-leadgen"
+version = "0.1.0"
+description = "24/7 lead-generation agent for independent fire protection & life safety companies"
+requires-python = ">=3.10"
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = "requirements.txt" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+fire-leadgen = "fire_leadgen.main:main"

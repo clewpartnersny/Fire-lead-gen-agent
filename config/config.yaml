@@ -1,0 +1,168 @@
+# =====================================================================
+# Fire Protection Lead-Gen Agent — main configuration
+#
+# This file drives discovery (what to search for and where), the
+# processing pipeline, and pacing for 24/7 operation. Rules from the
+# client research manual should be encoded here and in pe_firms.yaml.
+# =====================================================================
+
+discovery:
+  # Query templates. {keyword} and {region} are substituted from the
+  # lists below; every keyword x region combination becomes a search.
+  query_templates:
+    - '{keyword} company {region}'
+    - '{keyword} contractor {region}'
+    - '{keyword} services {region}'
+
+  keywords:
+    - fire protection
+    - life safety
+    - fire alarm
+    - fire suppression
+    - fire sprinkler
+    - fire extinguisher service
+    - fire safety inspection
+    - kitchen hood suppression
+    - fire and security systems
+
+  # Regions to sweep. Start with metros/states you care about; the
+  # scheduler rotates through combinations continuously, so a long list
+  # is fine — it just takes more cycles to cover.
+  regions:
+    - New York NY
+    - Long Island NY
+    - New Jersey
+    - Connecticut
+    - Pennsylvania
+    - Massachusetts
+    - Florida
+    - Texas
+    - California
+    - Illinois
+    - Ohio
+    - Georgia
+    - North Carolina
+    - Michigan
+    - Virginia
+    - Washington
+    - Arizona
+    - Colorado
+    - Tennessee
+    - Maryland
+
+  # Max organic results to keep per search query.
+  results_per_query: 20
+
+  # Also query Google Places (if GOOGLE_PLACES_API_KEY set) with
+  # "{keyword} in {region}" text searches.
+  use_places: true
+
+  # Domains that are never company websites (directories, social,
+  # marketplaces, news). Candidates from these hosts are dropped.
+  ignore_domains:
+    - yelp.com
+    - yellowpages.com
+    - angi.com
+    - angieslist.com
+    - houzz.com
+    - homeadvisor.com
+    - thumbtack.com
+    - bbb.org
+    - facebook.com
+    - instagram.com
+    - linkedin.com
+    - twitter.com
+    - x.com
+    - youtube.com
+    - wikipedia.org
+    - indeed.com
+    - glassdoor.com
+    - ziprecruiter.com
+    - mapquest.com
+    - manta.com
+    - dnb.com
+    - zoominfo.com
+    - buzzfile.com
+    - chamberofcommerce.com
+    - porch.com
+    - buildzoom.com
+    - procore.com
+    - amazon.com
+    - reddit.com
+    - nextdoor.com
+    - crunchbase.com
+    - pitchbook.com
+    - google.com
+    - findlaw.com
+    - superpages.com
+    - city-data.com
+
+  # Optional: industry directory / association member pages to harvest
+  # company links from. Add URLs (e.g. AFAA chapter member lists, NAFED
+  # member search results, state fire-marshal licensed-contractor lists).
+  directory_pages: []
+    # - url: https://example.org/member-directory
+    #   note: AFAA member list
+
+pipeline:
+  # A company must offer at least one of these to qualify (matched
+  # against website text). Empty list = accept everything discovered.
+  required_services_any:
+    - fire alarm
+    - fire suppression
+    - fire sprinkler
+    - fire protection
+    - life safety
+    - fire extinguisher
+    - kitchen hood
+    - clean agent
+    - smoke detect
+    - sprinkler inspection
+    - fire safety
+
+  # Skip obvious non-targets (manufacturers, SaaS, training-only, etc.)
+  # when these words dominate and no service keyword is present.
+  exclude_if_only:
+    - software
+    - insurance
+    - attorney
+    - staffing
+
+  # Companies flagged as PE-backed are still stored (with evidence) but
+  # marked independent=no and excluded from the sheet when true.
+  export_pe_backed: false
+
+  # Run a news/web search per company to look for acquisition evidence
+  # (costs one search per company; strongly recommended).
+  pe_news_search: true
+
+enrichment:
+  hunter: true        # domain search (emails + company data) + email finder
+  rocketreach: true   # owner/decision-maker lookup by title
+  # Titles that count as "owner" contacts, in priority order.
+  owner_titles:
+    - owner
+    - founder
+    - president
+    - ceo
+    - chief executive
+    - principal
+    - managing partner
+    - general manager
+    - vice president
+
+scheduler:
+  # Seconds between full discovery cycles (one cycle = a batch of
+  # queries + processing everything new that was found).
+  cycle_delay_seconds: 300
+  # Queries executed per cycle (the rotation pointer persists in the DB,
+  # so over many cycles every keyword x region combo is covered).
+  queries_per_cycle: 10
+  # Politeness delay between outbound HTTP requests (seconds).
+  request_delay_seconds: 2
+  # Max new companies fully processed (extraction+enrichment) per cycle.
+  max_companies_per_cycle: 25
+
+storage:
+  database: data/leads.sqlite3
+  csv_fallback: out/leads.csv

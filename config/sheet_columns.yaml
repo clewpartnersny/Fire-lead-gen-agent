@@ -1,0 +1,45 @@
+# =====================================================================
+# Google Sheet column mapping.
+#
+# Each entry: <Sheet column header>: <internal field name>
+# Order here = column order in the sheet. When you share the real sheet
+# template, ONLY this file needs to change — rename headers and reorder
+# to match the template exactly.
+#
+# Available internal fields:
+#   name, website, domain, phone, email, address, city, state, zip,
+#   services, employee_estimate, size_basis, year_founded, locations,
+#   owner_name, owner_title, owner_email, owner_phone, owner_source,
+#   independent, pe_backed, pe_evidence, google_rating, google_reviews,
+#   linkedin_url, source, notes, first_seen, last_updated
+# =====================================================================
+
+key_column: Website          # column used to de-duplicate rows (by domain)
+
+columns:
+  Company Name: name
+  Website: website
+  Phone: phone
+  Email: email
+  Address: address
+  City: city
+  State: state
+  Zip: zip
+  Services: services
+  Est. Employees: employee_estimate
+  Size Basis: size_basis
+  Year Founded: year_founded
+  "# Locations": locations
+  Owner Name: owner_name
+  Owner Title: owner_title
+  Owner Email: owner_email
+  Owner Phone: owner_phone
+  Owner Source: owner_source
+  Independent: independent
+  PE Evidence: pe_evidence
+  Google Rating: google_rating
+  Google Reviews: google_reviews
+  Source: source
+  Notes: notes
+  First Seen: first_seen
+  Last Updated: last_updated
