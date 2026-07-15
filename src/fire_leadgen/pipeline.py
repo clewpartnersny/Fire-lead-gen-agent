@@ -10,7 +10,7 @@ import time
 
 from .db import Db
 from .discovery import directories, llm_suggest, places, search
-from .enrichment import hunter, msa, owners, ppp, ppp_web, size
+from .enrichment import hunter, msa, owners, ppp, ppp_web, reviews, size
 from .extraction import website
 from .models import Company
 from .output.sheets import SheetWriter
@@ -34,16 +34,26 @@ COMMERCIAL_HINTS = (
 
 
 def _customer_type(site_text: str) -> str:
+    """Single verdict - whichever customer base dominates the site copy."""
     lower = site_text.lower()
-    res = any(h in lower for h in RESIDENTIAL_HINTS)
-    com = any(h in lower for h in COMMERCIAL_HINTS)
-    if res and com:
-        return "Commercial & Residential"
-    if res:
-        return "Residential"
-    if com:
-        return "Commercial"
-    return ""
+    res = sum(lower.count(h) for h in RESIDENTIAL_HINTS)
+    com = sum(lower.count(h) for h in COMMERCIAL_HINTS)
+    if not res and not com:
+        return ""
+    return "Residential" if res > com else "Commercial"
+
+
+def _lead_source(source: str) -> str:
+    s = (source or "").lower()
+    if s.startswith("web search"):
+        return "Google"
+    if "places" in s:
+        return "Google Maps"
+    if s.startswith("directory"):
+        return "Industry Directory"
+    if s.startswith("ai suggestion"):
+        return "AI Suggestion"
+    return source[:40]
 
 
 class Pipeline:
@@ -174,6 +184,11 @@ class Pipeline:
         company.services = facts["services"]
         company.year_founded = facts["year_founded"]
         company.locations = facts["locations"]
+        company.office_locations = facts.get("office_locations", "")
+        n_offices = len([o for o in company.office_locations.split(";") if o.strip()])
+        if not company.locations and n_offices > 1:
+            company.locations = str(n_offices)
+        company.lead_source = _lead_source(company.source)
 
         # ---- qualification ----------------------------------------------
         required = pcfg.get("required_services_any", [])
@@ -190,6 +205,17 @@ class Pipeline:
         company.industry = pcfg.get("industry_label", "Fire Protection")
         company.customer_type = _customer_type(crawl["text"])
         company.msa = msa.assign_msa(company.city, company.state)
+
+        # Google Reviews must always be populated: leads found via Maps
+        # already carry it; backfill everything else via Serper /places.
+        if not company.google_reviews:
+            rating, count = reviews.lookup_reviews(
+                company.name, company.city, company.state, self.http
+            )
+            company.google_rating = company.google_rating or rating
+            company.google_reviews = count
+        if not company.google_reviews:
+            company.google_reviews = "N/A"
 
         # ---- PE / independence screening --------------------------------
         news_fn = None

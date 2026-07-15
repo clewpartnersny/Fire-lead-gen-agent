@@ -128,6 +128,14 @@ def _lookup(person_id, headers: dict) -> dict | None:
     def _val(item):
         return item.get("email") or item.get("number") or "" if isinstance(item, dict) else str(item)
 
+    # prefer the owner's mobile/cell number (the manual wants the owner's
+    # phone, never the office line; RocketReach marks these type=mobile)
+    def _pick_phone(items):
+        for it in items:
+            if isinstance(it, dict) and str(it.get("type", "")).lower() in ("mobile", "cell", "personal"):
+                return _val(it)
+        return _val(items[0]) if items else ""
+
     # prefer a professional (company-domain) email over personal webmail,
     # per the research manual
     pro = [e for e in emails if isinstance(e, dict) and e.get("type") == "professional"]
@@ -137,7 +145,7 @@ def _lookup(person_id, headers: dict) -> dict | None:
         "name": p.get("name", ""),
         "title": p.get("current_title", ""),
         "email": best_email,
-        "phone": _val(phones[0]) if phones else "",
+        "phone": _pick_phone(phones),
         "linkedin_url": p.get("linkedin_url", ""),
         "birth_year": p.get("birth_year") or "",
     }

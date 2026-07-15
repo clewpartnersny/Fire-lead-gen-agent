@@ -43,7 +43,9 @@ function doPost(e) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sh = ss.getSheetByName(WORKSHEET) || ss.insertSheet(WORKSHEET);
 
-    // header row: use the sheet's existing header if present, else create it
+    // header row: use the sheet's existing header if present, else create
+    // it; any NEW headers in the payload are appended to the right so
+    // column additions in the agent flow through automatically
     let headers;
     if (sh.getLastRow() === 0) {
       headers = body.headers;
@@ -51,6 +53,13 @@ function doPost(e) {
     } else {
       headers = sh.getRange(1, 1, 1, sh.getLastColumn())
                   .getValues()[0].map(String).filter(function (h) { return h; });
+      const missing = (body.headers || []).filter(function (h) {
+        return headers.indexOf(h) < 0;
+      });
+      if (missing.length) {
+        sh.getRange(1, headers.length + 1, 1, missing.length).setValues([missing]);
+        headers = headers.concat(missing);
+      }
     }
 
     const keyIdx = headers.indexOf(body.key_column);

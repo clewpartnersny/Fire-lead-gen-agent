@@ -102,8 +102,12 @@ def test_full_pipeline_offline(tmp_path, monkeypatch):
     assert row["State"] == "CT"
     assert row["MSA"] == "Bridgeport-Stamford-Norwalk"
     assert row["Industry"] == "Fire Protection"
-    assert row["Customer Type"] == "Commercial & Residential"
+    # commercial hints dominate -> single verdict, never "both"
+    assert row["Customer Type"] == "Commercial"
     assert row["Year Founded"] == "1987"
+    assert row["Lead Source"] == "Google"
+    assert "Stamford, CT" in row["Location"]
+    assert row["Google Reviews"] == "N/A"  # no Serper key in tests
     # owner from team page; generic info@ must NOT be the contact email
     assert row["First Name"] == "John"
     assert row["Last Name"] == "Smith"

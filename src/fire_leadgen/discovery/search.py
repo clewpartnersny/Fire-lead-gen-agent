@@ -29,10 +29,33 @@ def build_queries(discovery_cfg: dict) -> list[str]:
 
 def web_search(query: str, max_results: int, http: HttpClient) -> list[dict]:
     """Return [{url, title, snippet}] for one query."""
+    serper_key = os.environ.get("SERPER_API_KEY")
+    if serper_key:
+        results = _serper_search(query, max_results, serper_key, http)
+        if results:
+            return results
     serpapi_key = os.environ.get("SERPAPI_KEY")
     if serpapi_key:
         return _serpapi_search(query, max_results, serpapi_key, http)
     return _ddg_search(query, max_results)
+
+
+def _serper_search(query: str, max_results: int, key: str, http: HttpClient) -> list[dict]:
+    resp = http.post(
+        "https://google.serper.dev/search",
+        headers={"X-API-KEY": key, "Content-Type": "application/json"},
+        json={"q": query, "num": min(max_results, 20)},
+    )
+    if resp is None:
+        return []
+    return [
+        {
+            "url": o.get("link", ""),
+            "title": o.get("title", ""),
+            "snippet": o.get("snippet", ""),
+        }
+        for o in resp.json().get("organic", [])[:max_results]
+    ]
 
 
 def _serpapi_search(query: str, max_results: int, key: str, http: HttpClient) -> list[dict]:

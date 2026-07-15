@@ -30,3 +30,5 @@ columns:
   Locations: locations
   Year Founded: year_founded
   Notes: notes
+  Lead Source: lead_source
+  Location: office_locations

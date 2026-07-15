@@ -35,6 +35,8 @@ class Company:
     est_revenue: str = ""
     employees: str = ""
     locations: str = ""
+    office_locations: str = ""  # "City, ST; City, ST" list of offices
+    lead_source: str = ""       # Google / Google Maps / Industry Directory / ...
     year_founded: str = ""
     notes: str = ""
 

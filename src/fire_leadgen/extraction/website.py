@@ -30,6 +30,12 @@ FOLLOW_HINTS = (
 )
 MAX_SUBPAGES = 6
 
+US_STATES = (
+    "AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|"
+    "MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY|DC"
+)
+CITY_STATE_RE = re.compile(rf"([A-Z][A-Za-z .'\-]{{2,25}}),\s*({US_STATES})\b")
+
 TITLE_WORDS = (
     "owner", "founder", "president", "ceo", "chief executive", "principal",
     "managing partner", "vice president", "general manager", "coo", "cfo",
@@ -101,7 +107,20 @@ def extract_facts(crawl: dict, service_keywords: list[str]) -> dict:
     if lm:
         locations = lm.group(1)
 
+    # distinct "City, ST" mentions -> office/coverage list
+    offices: list[str] = []
+    for cm in CITY_STATE_RE.finditer(text):
+        office_city = clean_city(cm.group(1))
+        if not office_city or len(office_city) < 3:
+            continue
+        tag = f"{office_city}, {cm.group(2)}"
+        if tag not in offices:
+            offices.append(tag)
+        if len(offices) >= 8:
+            break
+
     return {
+        "office_locations": "; ".join(offices),
         "phone": normalize_phone(text),
         "email": first_email(text, crawl["domain"]),
         "address": address,
