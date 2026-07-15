@@ -91,8 +91,11 @@ def extract_facts(crawl: dict, service_keywords: list[str]) -> dict:
 
     services = sorted({kw for kw in service_keywords if kw.lower() in lower})
 
+    # addresses are often split across lines ("123 Main St\nStamford, CT
+    # 06901"), so match against a newline-collapsed copy of the text
+    flat = re.sub(r"[ \t]*\n[ \t]*", ", ", text)
     address = city = state = zipcode = ""
-    m = ADDRESS_RE.search(text)
+    m = ADDRESS_RE.search(flat)
     if m:
         address = m.group(0)
         city, state, zipcode = clean_city(m.group(1)), m.group(2), m.group(3)

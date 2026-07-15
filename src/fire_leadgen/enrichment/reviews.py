@@ -21,11 +21,13 @@ def _norm(text: str) -> str:
     return re.sub(r"[^a-z0-9]", "", (text or "").lower())
 
 
-def lookup_reviews(name: str, city: str, state: str, http: HttpClient) -> tuple[str, str]:
-    """Return (rating, review_count) as strings, or ("", "") if unavailable."""
+def lookup_reviews(name: str, city: str, state: str, http: HttpClient) -> tuple[str, str, str]:
+    """Return (rating, review_count, address) as strings; empties if unavailable.
+    The address is the Google Maps listing address - used to backfill
+    city/state when the company website didn't yield one."""
     key = os.environ.get("SERPER_API_KEY")
     if not key or not name:
-        return "", ""
+        return "", "", ""
     query = " ".join(part for part in (name, city, state) if part)
     resp = http.post(
         SERPER_PLACES_URL,
@@ -33,7 +35,7 @@ def lookup_reviews(name: str, city: str, state: str, http: HttpClient) -> tuple[
         json={"q": query},
     )
     if resp is None:
-        return "", ""
+        return "", "", ""
     wanted = _norm(name)
     for place in resp.json().get("places", []):
         found = _norm(place.get("title", ""))
@@ -44,5 +46,5 @@ def lookup_reviews(name: str, city: str, state: str, http: HttpClient) -> tuple[
         ):
             rating = str(place.get("rating", "") or "")
             count = str(place.get("ratingCount", "") or "0")
-            return rating, count
-    return "", ""
+            return rating, count, place.get("address", "") or ""
+    return "", "", ""

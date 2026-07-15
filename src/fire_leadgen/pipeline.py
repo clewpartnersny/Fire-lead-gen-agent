@@ -12,6 +12,7 @@ from .db import Db
 from .discovery import directories, llm_suggest, places, search
 from .enrichment import hunter, msa, owners, ppp, ppp_web, reviews, size
 from .extraction import website
+from .extraction.website import CITY_STATE_RE
 from .models import Company
 from .output.sheets import SheetWriter
 from .screening.pe_screen import PeScreener
@@ -207,18 +208,36 @@ class Pipeline:
 
         company.industry = pcfg.get("industry_label", "Fire Protection")
         company.customer_type = _customer_type(crawl["text"])
-        company.msa = msa.assign_msa(company.city, company.state)
 
         # Google Reviews must always be populated: leads found via Maps
-        # already carry it; backfill everything else via Serper /places.
+        # already carry it; backfill everything else via Serper /places
+        # (which also returns the listing address - a location fallback).
+        maps_address = ""
         if not company.google_reviews:
-            rating, count = reviews.lookup_reviews(
+            rating, count, maps_address = reviews.lookup_reviews(
                 company.name, company.city, company.state, self.http
             )
             company.google_rating = company.google_rating or rating
             company.google_reviews = count
         if not company.google_reviews:
             company.google_reviews = "N/A"
+
+        # City/State/MSA must always be populated. Fallback chain:
+        # site address -> Google Maps listing -> office list -> search region.
+        if (not company.city or not company.state) and maps_address:
+            m = ADDRESS_RE.search(maps_address) or CITY_STATE_RE.search(maps_address)
+            if m:
+                company.city = company.city or clean_city(m.group(1))
+                company.state = company.state or m.group(2)
+        if (not company.city or not company.state) and company.office_locations:
+            first = company.office_locations.split(";")[0].strip()
+            if "," in first:
+                c, st = first.rsplit(",", 1)
+                company.city = company.city or c.strip()
+                company.state = company.state or st.strip()
+        if not company.state:
+            company.state = msa.region_to_state(company.source)
+        company.msa = msa.assign_msa(company.city, company.state)
 
         # ---- PE / independence screening --------------------------------
         news_fn = None

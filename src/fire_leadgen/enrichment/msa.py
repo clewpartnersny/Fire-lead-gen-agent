@@ -119,6 +119,41 @@ MSA_MAP: dict[str, list[tuple[str, tuple[str, ...]]]] = {
 }
 
 
+STATE_NAMES = {
+    "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR",
+    "california": "CA", "colorado": "CO", "connecticut": "CT", "delaware": "DE",
+    "florida": "FL", "georgia": "GA", "hawaii": "HI", "idaho": "ID",
+    "illinois": "IL", "indiana": "IN", "iowa": "IA", "kansas": "KS",
+    "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+    "massachusetts": "MA", "michigan": "MI", "minnesota": "MN",
+    "mississippi": "MS", "missouri": "MO", "montana": "MT", "nebraska": "NE",
+    "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ",
+    "new mexico": "NM", "new york": "NY", "north carolina": "NC",
+    "north dakota": "ND", "ohio": "OH", "oklahoma": "OK", "oregon": "OR",
+    "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+    "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT",
+    "vermont": "VT", "virginia": "VA", "washington": "WA",
+    "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY",
+}
+_ABBREVS = set(STATE_NAMES.values())
+
+
+def region_to_state(text: str) -> str:
+    """Best-effort state from a search region / lead source string, e.g.
+    'web search: fire protection company Stamford CT' -> 'CT',
+    '... New Jersey' -> 'NJ'."""
+    import re as _re
+
+    m = _re.search(r"\b([A-Z]{2})\s*$", (text or "").strip())
+    if m and m.group(1) in _ABBREVS:
+        return m.group(1)
+    lower = (text or "").lower()
+    for name, ab in STATE_NAMES.items():
+        if name in lower:
+            return ab
+    return ""
+
+
 def assign_msa(city: str, state: str) -> str:
     """Return the MSA for a city/state, or '<STATE> (Other)' when unmapped."""
     state = (state or "").strip().upper()
