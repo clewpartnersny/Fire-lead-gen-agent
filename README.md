@@ -116,18 +116,35 @@ The Clew research manual's rules are encoded as follows:
 | 1000+ reviews → call to confirm ownership | flagged in Notes |
 | Company age 20+ / multiple locations are green flags | Year Founded + Locations columns populated from site |
 
-### PPP loan data (recommended setup)
+### PPP loan data
 
-The manual's primary size signal is the PPP loan database. It's free,
-public SBA FOIA data. One-time setup:
+The manual's primary size signal is the PPP loan database. The agent
+checks **two sources automatically**, no setup required:
 
-1. Download the loan CSVs from https://data.sba.gov/dataset/ppp-foia
-   (the `public_150k_plus` file alone covers every loan ≥ $150k and is
-   enough, since smaller loans are rejected anyway).
-2. Index locally: `fire-leadgen ppp-import path/to/public_150k_plus_*.csv`
+1. **Local index** (optional, fastest): download CSVs from
+   https://data.sba.gov/dataset/ppp-foia and run
+   `fire-leadgen ppp-import path/to/public_150k_plus_*.csv`.
+2. **Live web lookup** (default): when the local index has no match, the
+   agent searches ProPublica's Coronavirus Bailouts database and
+   FederalPay's PPP search directly, matching by normalized company name
+   + state. Hits and misses are cached locally so each company is looked
+   up at most once. Disable with `enrichment.ppp_web: false`.
 
-Every lead is then matched against the index automatically (largest draw
-wins), filling PPP Loan, Est. Revenue and Employees with zero API cost.
+Matches fill PPP Loan, Est. Revenue (loan × 15.4) and Employees (jobs
+reported); loans under $150k reject the lead per the manual.
+
+### Discovery methods (manual Methods A-F, automated)
+
+| Manual method | How the agent runs it |
+|---|---|
+| A: PPP list | PPP web lookup + optional local index (size/qualification) |
+| B: Google Search / Maps | 9 query phrasings × keywords × regions, rotating 24/7; Google Places when a key is set |
+| C: Import From Web | superseded — the agent scrapes results itself |
+| D: Association / trade directories | `directory_pages` harvester (FSSA, AFAA, NFSA, AFSA, NAFED pre-loaded; add state rosters & trade-show exhibitor lists) |
+| E: Licensing databases | add license-roster URLs to `directory_pages` |
+| F: ChatGPT suggestions | Anthropic-powered suggestions (set `ANTHROPIC_API_KEY`), every name verified via web search + full screening before entering the sheet |
+| G: Similar companies | not automated (Apollo/LinkedIn are login-walled) — candidates for manual research |
+| H: Employee outreach | human-only by nature |
 
 ## Independence verdicts
 

@@ -9,8 +9,8 @@ import logging
 import time
 
 from .db import Db
-from .discovery import directories, places, search
-from .enrichment import hunter, msa, owners, ppp, size
+from .discovery import directories, llm_suggest, places, search
+from .enrichment import hunter, msa, owners, ppp, ppp_web, size
 from .extraction import website
 from .models import Company
 from .output.sheets import SheetWriter
@@ -95,6 +95,23 @@ class Pipeline:
                 continue  # each directory page is harvested once
             for cand in directories.harvest_directory(url, self.http, self.ignore_domains):
                 added += self._add_candidate(cand, source=f"directory: {url}")
+
+        # Method F (research manual): AI-suggested companies, each verified
+        # by resolving a real website through search before entering the DB.
+        if disc.get("use_llm_suggestions") and llm_suggest.enabled() and queries:
+            topic = queries[0]
+            names = llm_suggest.suggest_companies(
+                topic, disc.get("llm_suggestions_per_cycle", 10)
+            )
+            for name in names:
+                results = search.web_search(f'"{name}" website', 5, self.http)
+                for cand in search.filter_candidates(results, self.ignore_domains):
+                    if self.db.has_company(cand["domain"]):
+                        break
+                    added += self._add_candidate(
+                        cand, source=f"AI suggestion (verified): {topic}"
+                    )
+                    break
         return added
 
     def _add_candidate(self, cand: dict, source: str) -> int:
@@ -183,7 +200,24 @@ class Pipeline:
             notes.append(f"VERIFY OWNERSHIP - {company.pe_evidence}")
 
         # ---- PPP loan -> revenue estimate (manual Step 4) ----------------
+        # local index first; then live web lookup (ProPublica/FederalPay),
+        # cached either way so each company is fetched at most once
         ppp_hit = ppp.lookup(self.db.conn, company.name, company.state)
+        if (
+            not ppp_hit
+            and ecfg.get("ppp_web", True)
+            and not ppp.is_cached_miss(self.db.conn, company.name, company.state)
+        ):
+            web_hit = ppp_web.lookup_web(company.name, company.state, self.http)
+            if web_hit.get("amount"):
+                ppp.store(
+                    self.db.conn, company.name, company.city, company.state,
+                    web_hit["amount"], web_hit.get("jobs", 0),
+                )
+                ppp_hit = web_hit
+                notes.append(f"PPP via {web_hit.get('source', 'web')}")
+            else:
+                ppp.cache_miss(self.db.conn, company.name, company.state)
         if ppp_hit:
             amount = ppp_hit["amount"]
             min_ppp = pcfg.get("min_ppp_loan", 150_000)

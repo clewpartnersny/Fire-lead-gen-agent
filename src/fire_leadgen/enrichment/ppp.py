@@ -33,6 +33,11 @@ CREATE TABLE IF NOT EXISTS ppp_loans (
     jobs      INTEGER
 );
 CREATE INDEX IF NOT EXISTS idx_ppp_state_name ON ppp_loans(state, name_norm);
+CREATE TABLE IF NOT EXISTS ppp_misses (
+    name_norm TEXT NOT NULL,
+    state     TEXT NOT NULL,
+    PRIMARY KEY (name_norm, state)
+);
 """
 
 # column aliases across SBA CSV vintages
@@ -115,6 +120,43 @@ def lookup(conn: sqlite3.Connection, company_name: str, state: str) -> dict:
         return {}
     row = rows[0]
     return {"matched_name": row[0], "amount": row[1] or 0.0, "jobs": row[2] or 0}
+
+
+def store(
+    conn: sqlite3.Connection,
+    name: str,
+    city: str,
+    state: str,
+    amount: float,
+    jobs: int,
+) -> None:
+    """Cache a web-lookup result so the company is never fetched again."""
+    ensure_schema(conn)
+    conn.execute(
+        "INSERT INTO ppp_loans VALUES(?,?,?,?,?,?)",
+        (normalize_name(name), name, city, (state or "").upper(), amount, jobs),
+    )
+    conn.commit()
+
+
+def cache_miss(conn: sqlite3.Connection, name: str, state: str) -> None:
+    ensure_schema(conn)
+    conn.execute(
+        "INSERT OR IGNORE INTO ppp_misses VALUES(?,?)",
+        (normalize_name(name), (state or "").upper()),
+    )
+    conn.commit()
+
+
+def is_cached_miss(conn: sqlite3.Connection, name: str, state: str) -> bool:
+    ensure_schema(conn)
+    return (
+        conn.execute(
+            "SELECT 1 FROM ppp_misses WHERE name_norm=? AND state=?",
+            (normalize_name(name), (state or "").upper()),
+        ).fetchone()
+        is not None
+    )
 
 
 def has_data(conn: sqlite3.Connection) -> bool:

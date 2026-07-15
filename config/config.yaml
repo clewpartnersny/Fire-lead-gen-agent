@@ -9,10 +9,18 @@
 discovery:
   # Query templates. {keyword} and {region} are substituted from the
   # lists below; every keyword x region combination becomes a search.
+  # Varied phrasings surface different companies (manual Method B) -
+  # the scheduler rotates through all combinations over time.
   query_templates:
     - '{keyword} company {region}'
     - '{keyword} contractor {region}'
     - '{keyword} services {region}'
+    - 'best {keyword} companies {region}'
+    - 'family owned {keyword} company {region}'
+    - 'commercial {keyword} company {region}'
+    - '{keyword} inspection and testing {region}'
+    - 'list of {keyword} companies {region}'
+    - '{keyword} installation company near {region}'
 
   keywords:
     - fire protection
@@ -97,12 +105,34 @@ discovery:
     - superpages.com
     - city-data.com
 
-  # Optional: industry directory / association member pages to harvest
-  # company links from. Add URLs (e.g. AFAA chapter member lists, NAFED
-  # member search results, state fire-marshal licensed-contractor lists).
-  directory_pages: []
-    # - url: https://example.org/member-directory
-    #   note: AFAA member list
+  # Industry directory / association member pages to harvest company
+  # links from (manual Methods D & E). Each page is fetched ONCE and all
+  # external links become candidates (which then pass the normal
+  # qualification pipeline, so junk links get filtered out naturally).
+  # Some association directories are JavaScript-driven and yield nothing
+  # via plain HTML - harmless to keep listed. Add state license rosters
+  # and trade-show exhibitor lists here as you find them; paste-in
+  # results pages (with search params in the URL) work too.
+  directory_pages:
+    - url: https://www.fssa.net/page/MemberDirectory
+      note: Fire Suppression Systems Association members
+    - url: https://www.afaa.org/mpage/chapters
+      note: Automatic Fire Alarm Association chapters (follow to member lists)
+    - url: https://nfsa.org/membership/member-directory/
+      note: National Fire Sprinkler Association directory
+    - url: https://www.firesprinkler.org/AFSA/Membership/Contractor-Locator/AFSA/Contractor-Locator.aspx
+      note: American Fire Sprinkler Association contractor locator
+    - url: https://www.nafed.org/regions/
+      note: National Association of Fire Equipment Distributors regions
+    # State licensing rosters (Method E) - examples; extend per state:
+    # - url: https://www.tdi.texas.gov/fire/fmli.html
+    #   note: Texas State Fire Marshal licensed fire protection companies
+
+  # Method F (research manual): AI-suggested companies. Requires
+  # ANTHROPIC_API_KEY in .env; every suggestion is verified by resolving
+  # a real website via search, then passes normal screening.
+  use_llm_suggestions: true
+  llm_suggestions_per_cycle: 10
 
 pipeline:
   # Value for the sheet's "Industry" column.
@@ -154,6 +184,8 @@ enrichment:
   rocketreach: true   # owner/decision-maker lookup by title
   verify_emails: true # run owner emails through Hunter's verifier; invalid
                       # emails are dropped and the lead marked "Needs Email"
+  ppp_web: true       # live PPP lookup (ProPublica/FederalPay) when the
+                      # local index has no match; results cached locally
   # Titles that count as "owner" contacts, in priority order.
   owner_titles:
     - owner
