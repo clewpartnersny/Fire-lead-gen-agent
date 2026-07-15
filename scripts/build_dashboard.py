@@ -202,6 +202,14 @@ header.top{display:flex;justify-content:space-between;align-items:baseline;
 /* connectors */
 .stem{width:2px;height:22px;background:var(--line);margin:0 auto;}
 .bus{height:2px;background:var(--line);margin:0 24px;}
+/* support staff row */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:12px;margin-top:12px;}
+.staff{background:var(--surface);border:1px solid var(--line);
+  border-top:3px solid var(--queue);padding:12px 14px;}
+.s-name{font-weight:800;font-size:14.5px;letter-spacing:-.01em;}
+.s-when{color:var(--accent-ink);font-size:11.5px;font-weight:700;margin:2px 0 6px;}
+.s-what{color:var(--muted);font-size:12.5px;line-height:1.5;}
 /* agent grid */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
   gap:14px;margin-top:22px;}
@@ -288,6 +296,33 @@ h2.section{font-size:13px;text-transform:uppercase;letter-spacing:.09em;
     databases, and reports problems. Change anything by texting the chat.</p>
     <div class="chips" id="apis"></div>
     <div class="head-links" id="headlinks"></div>
+  </div>
+  <div class="stem"></div><div class="bus"></div>
+
+  <h2 class="section">Support staff — automated routines</h2>
+  <div class="staff-grid">
+    <div class="staff">
+      <div class="s-name">Watchdog</div>
+      <div class="s-when mono">hourly</div>
+      <div class="s-what">Keeps every agent running, restores the environment
+        after container recycles, snapshots databases, escalates outages
+        and quota problems.</div>
+    </div>
+    <div class="staff">
+      <div class="s-name">Trainer</div>
+      <div class="s-when mono">daily · 9:00 ET</div>
+      <div class="s-what">Refines each agent from outcomes: search-yield
+        tuning, verifying flagged ownership, learning junk domains, and
+        ingesting your edits in the sheet. Safe changes auto-applied;
+        threshold changes proposed to you.</div>
+    </div>
+    <div class="staff">
+      <div class="s-name">Deal Watch</div>
+      <div class="s-when mono">daily · 8:30 ET</div>
+      <div class="s-what">Sweeps each sector's M&amp;A news; flags acquired
+        companies already in the sheet, adds new consolidators to buyer
+        screens, sends the morning digest.</div>
+    </div>
   </div>
   <div class="stem"></div><div class="bus"></div>
 
