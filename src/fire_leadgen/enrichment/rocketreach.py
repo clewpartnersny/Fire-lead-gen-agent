@@ -141,27 +141,40 @@ def _lookup(person_id, headers: dict) -> dict | None:
     emails = p.get("emails") or []
     phones = p.get("phones") or []
 
-    def _val(item):
-        return item.get("email") or item.get("number") or "" if isinstance(item, dict) else str(item)
-
-    # prefer the owner's mobile/cell number (the manual wants the owner's
-    # phone, never the office line; RocketReach marks these type=mobile)
-    def _pick_phone(items):
-        for it in items:
-            if isinstance(it, dict) and str(it.get("type", "")).lower() in ("mobile", "cell", "personal"):
-                return _val(it)
-        return _val(items[0]) if items else ""
-
-    # prefer a professional (company-domain) email over personal webmail,
-    # per the research manual
-    pro = [e for e in emails if isinstance(e, dict) and e.get("type") == "professional"]
-    best_email = _val(pro[0]) if pro else (_val(emails[0]) if emails else "")
-
     return {
         "name": p.get("name", ""),
         "title": p.get("current_title", ""),
-        "email": best_email,
-        "phone": _pick_phone(phones),
+        "email": _best_email(emails),
+        "phone": _pick_phones(phones),
         "linkedin_url": p.get("linkedin_url", ""),
         "birth_year": p.get("birth_year") or "",
     }
+
+
+def _val(item) -> str:
+    if isinstance(item, dict):
+        return item.get("email") or item.get("number") or ""
+    return str(item)
+
+
+def _pick_phones(items: list) -> str:
+    """ALL of the owner's mobile/cell numbers (the manual: never the office
+    line; upload the strong possibilities ranked most-probable first).
+    RocketReach marks mobiles type=mobile and flags one as recommended."""
+    mobiles = [
+        it for it in items
+        if isinstance(it, dict)
+        and str(it.get("type", "")).lower() in ("mobile", "cell", "personal")
+    ]
+    mobiles.sort(key=lambda it: (not it.get("recommended"), it.get("validity") != "valid"))
+    numbers = [_val(it) for it in mobiles if _val(it)]
+    if not numbers and items:  # no typed mobiles - fall back to first number
+        numbers = [_val(items[0])]
+    return "; ".join(list(dict.fromkeys(numbers))[:4])  # manual: 3-4 max, ranked
+
+
+def _best_email(emails: list) -> str:
+    """Professional (company-domain) email over personal webmail, per the
+    research manual."""
+    pro = [e for e in emails if isinstance(e, dict) and e.get("type") == "professional"]
+    return _val(pro[0]) if pro else (_val(emails[0]) if emails else "")
