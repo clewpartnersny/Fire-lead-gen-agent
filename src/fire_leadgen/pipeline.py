@@ -363,10 +363,13 @@ class Pipeline:
             notes.append(f"lead source: {company.source}")
         company.notes = " | ".join(notes)[:1000]
 
-        # the sheet's Locations column shows the office list when we have
-        # one (count stays as fallback and was already used for sizing)
-        if company.office_locations:
-            company.locations = company.office_locations
+        # Locations column carries the NUMBER of locations; the city list
+        # stays internal (office_locations). At least 1 once we know
+        # where the company is.
+        if not company.locations and company.office_locations:
+            company.locations = str(len([o for o in company.office_locations.split(";") if o.strip()]))
+        if not company.locations and (company.city or company.address):
+            company.locations = "1"
 
         self.db.save_company(company, "ready")
         log.info(

@@ -105,7 +105,7 @@ def test_full_pipeline_offline(tmp_path, monkeypatch):
     assert row["Customer Type"] == "Commercial"
     assert row["Year Founded"] == "1987"
     assert row["Lead Source"] == "Google"
-    assert "Stamford, CT" in row["Locations"]
+    assert row["Locations"] == "1"  # a count, never city names
     assert row["Google Reviews"] == "N/A"  # no Serper key in tests
     # owner from team page; generic info@ must NOT be the contact email
     assert row["First Name"] == "John"
