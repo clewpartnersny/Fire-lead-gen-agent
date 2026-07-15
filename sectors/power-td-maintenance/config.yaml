@@ -1,6 +1,7 @@
 # Power T&D Maintenance sector configuration.
 # NOTE: Customers are utilities; Google reviews are meaningless here - size via PPP jobs/employees.
 sector: Power T&D Maintenance
+persona: Petra Vance
 enabled: true
 output:
   worksheet: Power T&D

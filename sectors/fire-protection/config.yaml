@@ -8,6 +8,7 @@
 
 # Sector identity - used by `run-all` and logging.
 sector: Fire Protection
+persona: Fiona Brandt
 enabled: true
 
 # Sheet output: every sector shares the spreadsheet + webhook configured

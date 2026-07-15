@@ -1,6 +1,7 @@
 # HVAC sector configuration.
 # NOTE: Manual: Google reviews DO matter for residential HVAC (>200 = add).
 sector: HVAC
+persona: Hank Mercer
 enabled: true
 output:
   worksheet: HVAC

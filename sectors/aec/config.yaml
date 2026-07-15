@@ -1,6 +1,7 @@
 # AEC sector configuration.
 # NOTE: Professional services: contact must be the Managing Partner/Principal, match surnames in firm name (manual).
 sector: AEC
+persona: Ava Lindqvist
 enabled: true
 output:
   worksheet: AEC

@@ -77,6 +77,7 @@ def collect() -> dict:
         st = stats["statuses"]
         sectors.append({
             "slug": slug,
+            "persona": cfg.get("persona", ""),
             "name": cfg.get("sector", slug),
             "enabled": bool(cfg.get("enabled", True)),
             "worksheet": (cfg.get("output") or {}).get("worksheet", ""),
@@ -202,13 +203,24 @@ header.top{display:flex;justify-content:space-between;align-items:baseline;
 /* connectors */
 .stem{width:2px;height:22px;background:var(--line);margin:0 auto;}
 .bus{height:2px;background:var(--line);margin:0 24px;}
+/* avatars */
+.avatar{width:46px;height:46px;border-radius:50%;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:16px;color:#fff;letter-spacing:.02em;
+  background:var(--av,#888);position:relative;}
+.avatar.lg{width:56px;height:56px;font-size:19px;}
+.avatar .st{position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;
+  border-radius:50%;border:2.5px solid var(--surface);}
+.avatar .st.on{background:var(--ok);} .avatar .st.off{background:var(--staged);}
+.who{display:flex;align-items:center;gap:12px;min-width:0;}
+.who .nm{font-weight:800;font-size:16px;letter-spacing:-.01em;line-height:1.2;}
+.who .rl{color:var(--muted);font-size:12.5px;}
 /* support staff row */
-.staff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
   gap:12px;margin-top:12px;}
-.staff{background:var(--surface);border:1px solid var(--line);
-  border-top:3px solid var(--queue);padding:12px 14px;}
-.s-name{font-weight:800;font-size:14.5px;letter-spacing:-.01em;}
-.s-when{color:var(--accent-ink);font-size:11.5px;font-weight:700;margin:2px 0 6px;}
+.staff{background:var(--surface);border:1px solid var(--line);padding:14px;}
+.staff .who{margin-bottom:8px;}
+.s-when{color:var(--accent-ink);font-size:11.5px;font-weight:700;}
 .s-what{color:var(--muted);font-size:12.5px;line-height:1.5;}
 /* agent grid */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
@@ -290,10 +302,14 @@ h2.section{font-size:13px;text-transform:uppercase;letter-spacing:.09em;
 
   <div class="eyebrow">Head of research</div>
   <div class="head-card" style="margin-top:8px">
-    <h2>Claude — this chat session</h2>
-    <p>Holds the research manual, tunes every sector agent, screens judgment
-    calls, and runs an hourly watchdog that restarts agents, snapshots their
-    databases, and reports problems. Change anything by texting the chat.</p>
+    <div class="who" style="margin-bottom:10px">
+      <div class="avatar lg" style="--av:#B34700">C<span class="st on"></span></div>
+      <div><div class="nm" style="font-size:18px">Claude</div>
+        <div class="rl">Head of Research — this chat session</div></div>
+    </div>
+    <p>Holds the research manual, tunes every analyst, screens judgment
+    calls, and supervises the support staff. Change anything by texting
+    the chat.</p>
     <div class="chips" id="apis"></div>
     <div class="head-links" id="headlinks"></div>
   </div>
@@ -302,26 +318,27 @@ h2.section{font-size:13px;text-transform:uppercase;letter-spacing:.09em;
   <h2 class="section">Support staff — automated routines</h2>
   <div class="staff-grid">
     <div class="staff">
-      <div class="s-name">Watchdog</div>
+      <div class="who"><div class="avatar" style="--av:#5B6472">WO<span class="st on"></span></div>
+        <div><div class="nm">Walt Okonkwo</div><div class="rl">Operations — Watchdog</div></div></div>
       <div class="s-when mono">hourly</div>
-      <div class="s-what">Keeps every agent running, restores the environment
-        after container recycles, snapshots databases, escalates outages
-        and quota problems.</div>
+      <div class="s-what">Keeps every analyst running, restores the environment
+        after outages, snapshots databases, escalates quota problems.</div>
     </div>
     <div class="staff">
-      <div class="s-name">Trainer</div>
+      <div class="who"><div class="avatar" style="--av:#4A6FA5">TR<span class="st on"></span></div>
+        <div><div class="nm">Tess Romano</div><div class="rl">Performance Coach — Trainer</div></div></div>
       <div class="s-when mono">daily · 9:00 ET</div>
-      <div class="s-what">Refines each agent from outcomes: search-yield
-        tuning, verifying flagged ownership, learning junk domains, and
-        ingesting your edits in the sheet. Safe changes auto-applied;
-        threshold changes proposed to you.</div>
+      <div class="s-what">Refines each analyst from outcomes: search-yield tuning,
+        ownership verification, junk-domain learning, and your edits in
+        the sheet. Safe changes auto-applied; the rest proposed to you.</div>
     </div>
     <div class="staff">
-      <div class="s-name">Deal Watch</div>
+      <div class="who"><div class="avatar" style="--av:#7A5EA0">DM<span class="st on"></span></div>
+        <div><div class="nm">Dee Marsh</div><div class="rl">Market Intelligence — Deal Watch</div></div></div>
       <div class="s-when mono">daily · 8:30 ET</div>
       <div class="s-what">Sweeps each sector's M&amp;A news; flags acquired
-        companies already in the sheet, adds new consolidators to buyer
-        screens, sends the morning digest.</div>
+        companies already in the sheet, updates buyer screens, sends the
+        morning digest.</div>
     </div>
   </div>
   <div class="stem"></div><div class="bus"></div>
@@ -360,7 +377,9 @@ $('#headlinks').innerHTML =
   (D.sheet_url?`<a href="${esc(D.sheet_url)}" target="_blank" rel="noopener">Open the shared spreadsheet →</a> &nbsp;·&nbsp; `:'') +
   `<span class="mono" style="color:var(--muted)">watchdog: hourly</span>`;
 
-// agent cards
+// agent cards - each analyst is a person
+const HUES = ['#C0532F','#3E7CB1','#6B8E4E','#8A5EA6','#B58329','#4E8E86'];
+const initials = n => n.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
 $('#grid').innerHTML = D.sectors.map((s,i)=>{
   const tot = s.exported + s.queue + s.rejected;
   const strip = tot ? `<div class="strip" aria-hidden="true">
@@ -368,8 +387,14 @@ $('#grid').innerHTML = D.sectors.map((s,i)=>{
       <span class="s-q" style="flex:${s.queue}"></span>
       <span class="s-bad" style="flex:${s.rejected}"></span></div>`
     : `<div class="strip empty" aria-hidden="true"></div>`;
+  const who = s.persona || s.name;
   return `<button class="agent" data-i="${i}">
-    <div class="row"><h3>${esc(s.name)}</h3>
+    <div class="row">
+      <div class="who">
+        <div class="avatar" style="--av:${HUES[i%HUES.length]}">${esc(initials(who))}<span class="st ${s.enabled?'on':'off'}"></span></div>
+        <div><div class="nm">${esc(who)}</div>
+          <div class="rl">${esc(s.name)} Research Analyst</div></div>
+      </div>
       ${s.enabled?'<span class="pill live"><span class="blink"></span>Live</span>'
                  :'<span class="pill staged">Staged</span>'}</div>
     <div class="meta">tab <b class="mono">${esc(s.worksheet)}</b>
@@ -390,10 +415,14 @@ const hint = (label, msg) => `<div class="hint"><em>✎ ${esc(label)}: <b>“${e
 
 function openDrawer(i){
   const s = D.sectors[i];
+  const who = s.persona || s.name;
   $('#drawer').innerHTML = `
     <button class="close" id="dclose">Close ✕</button>
-    <div class="eyebrow">${s.enabled?'Live agent':'Staged agent'}</div>
-    <h2>${esc(s.name)}</h2>
+    <div class="who" style="margin:4px 0 2px">
+      <div class="avatar lg" style="--av:${HUES[i%HUES.length]}">${esc(initials(who))}<span class="st ${s.enabled?'on':'off'}"></span></div>
+      <div><h2 style="margin:0">${esc(who)}</h2>
+        <div class="rl">${esc(s.name)} Research Analyst · ${s.enabled?'live':'staged'}</div></div>
+    </div>
     <div class="sub mono">sectors/${esc(s.slug)}/ · sheet tab “${esc(s.worksheet)}”</div>
 
     <div class="sect"><h4>Funnel</h4>

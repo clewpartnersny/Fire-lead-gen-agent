@@ -1,6 +1,7 @@
 # Mission-Critical Electrical sector configuration.
 # NOTE: Focus: electrical contractors serving data centers / critical facilities.
 sector: Mission-Critical Electrical
+persona: Miles Okafor
 enabled: true
 output:
   worksheet: Mission-Critical Electrical
