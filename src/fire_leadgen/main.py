@@ -38,6 +38,40 @@ def build(config_dir: str, config: dict) -> tuple[Db, Pipeline, Scheduler]:
     return db, pipeline, scheduler
 
 
+def test_sheet(config_dir: str, config: dict) -> int:
+    """Send one labeled test row through the configured sheet output."""
+    from .models import Company
+    from .utils import now_iso
+
+    writer = SheetWriter(
+        os.path.join(config_dir, "sheet_columns.yaml"),
+        config["storage"].get("csv_fallback", "out/leads.csv"),
+    )
+    row = Company(
+        name="TEST ROW - safe to delete",
+        domain="test.example.com",
+        website="https://test.example.com",
+        industry="Fire Protection",
+        notes=f"connectivity test sent {now_iso()}",
+    )
+    try:
+        written = writer.upsert([row])
+    except Exception as exc:
+        print(f"FAILED: {exc}")
+        print(
+            "\nMost common causes:\n"
+            "  - SHEETS_WEBHOOK_SECRET in .env doesn't match SECRET in the Apps Script\n"
+            "  - the web app deployment isn't set to 'Who has access: Anyone'\n"
+            "    (URLs containing /a/macros/<yourdomain>/ usually mean domain-restricted;\n"
+            "    redeploy with access 'Anyone' and use the plain\n"
+            "    https://script.google.com/macros/s/.../exec URL)\n"
+            "  - after editing the script you must create a NEW deployment version"
+        )
+        return 1
+    print(f"OK - wrote {written} test row. Check the sheet, then delete the row.")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="fire-leadgen",
@@ -55,6 +89,10 @@ def main(argv: list[str] | None = None) -> int:
         help="index SBA PPP loan CSVs (data.sba.gov/dataset/ppp-foia) for size/revenue estimates",
     )
     ppp_cmd.add_argument("csv_files", nargs="+", help="PPP CSV file paths")
+    sub.add_parser(
+        "test-sheet",
+        help="send one labeled TEST row to the configured sheet output and report the result",
+    )
     args = parser.parse_args(argv)
 
     setup_logging(args.verbose)
@@ -67,6 +105,9 @@ def main(argv: list[str] | None = None) -> int:
         n = ppp.import_csvs(db.conn, args.csv_files)
         print(f"Indexed {n} PPP loan rows")
         return 0
+
+    if args.command == "test-sheet":
+        return test_sheet(args.config_dir, config)
 
     db, pipeline, scheduler = build(args.config_dir, config)
 
