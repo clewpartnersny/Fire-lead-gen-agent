@@ -324,7 +324,14 @@ class Pipeline:
         ready = self.db.get_companies("ready", limit=500)
         if not ready:
             return 0
-        written = self.writer.upsert(ready)
+        try:
+            written = self.writer.upsert(ready)
+        except Exception as exc:
+            log.warning(
+                "Sheet export failed (%s) - %d leads stay queued and will "
+                "be retried next cycle", exc, len(ready),
+            )
+            return 0
         for company in ready:
             self.db.save_company(company, "exported")
         log.info("Exported %d leads to the sheet", written)

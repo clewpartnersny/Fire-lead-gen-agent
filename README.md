@@ -61,13 +61,29 @@ With no API keys at all it still works: DuckDuckGo search + website crawling
 
 ### Google Sheet setup
 
-1. Create a GCP service account, enable the Sheets API, download its JSON key
-   as `service_account.json`.
-2. Share your sheet with the service account's email address (Editor).
-3. Put the sheet ID and worksheet name in `.env`.
-4. **To match your sheet template**: edit `config/sheet_columns.yaml` —
-   rename/reorder the headers there to mirror the template exactly. No code
-   changes needed. Rows are de-duplicated by website domain.
+**Option A — Apps Script webhook (recommended; no admin rights needed):**
+
+1. Open the target spreadsheet → Extensions → Apps Script.
+2. Paste in `docs/google_apps_script.gs`, change the `SECRET` constant to
+   a long random string, and set `WORKSHEET` to your tab name.
+3. Deploy → New deployment → Web app → *Execute as: Me*, *Who has
+   access: Anyone* → Deploy → authorize → copy the `/exec` URL.
+4. In `.env`: set `SHEETS_WEBHOOK_URL` to that URL and
+   `SHEETS_WEBHOOK_SECRET` to the same secret.
+
+Rows are upserted by `Company - Domain`; the header row is created
+automatically. A failed write keeps leads queued and retries next cycle.
+
+**Option B — GCP service account (needs a Google Cloud admin):** create a
+service account with the Sheets API enabled, save its JSON key as
+`service_account.json`, share the sheet with the service account's email
+(Editor), and set `GOOGLE_SHEET_ID` in `.env`.
+
+**Neither configured?** Leads land in `out/leads.csv` with identical
+columns — import into Sheets any time via File → Import.
+
+To adapt to a different template, edit `config/sheet_columns.yaml` —
+rename/reorder headers there; no code changes needed.
 
 ## Running it 24/7
 

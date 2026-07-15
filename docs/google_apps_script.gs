@@ -1,0 +1,95 @@
+/**
+ * Fire Lead-Gen Agent -> Google Sheet bridge.
+ *
+ * Lets the agent write leads into this spreadsheet WITHOUT a Google Cloud
+ * service account (no admin rights needed). Setup, ~3 minutes:
+ *
+ *  1. Open the target spreadsheet.
+ *  2. Extensions -> Apps Script. Delete any placeholder code and paste
+ *     this entire file.
+ *  3. Change SECRET below to a long random string.
+ *  4. Deploy -> New deployment -> type "Web app":
+ *       - Execute as: Me
+ *       - Who has access: Anyone
+ *     Click Deploy, authorize when prompted, and copy the Web app URL
+ *     (it looks like https://script.google.com/macros/s/XXXX/exec).
+ *  5. In the agent's .env set:
+ *       SHEETS_WEBHOOK_URL=<that URL>
+ *       SHEETS_WEBHOOK_SECRET=<the same SECRET string>
+ *
+ * The agent POSTs JSON: {secret, key_column, headers, rows:[{header:value}]}
+ * Rows are UPSERTED: if a row with the same key (Company - Domain) exists
+ * it is updated in place, otherwise appended. The header row is created
+ * automatically on first write.
+ */
+
+const SECRET = 'change-me-to-a-long-random-string';
+const WORKSHEET = 'Sheet1';   // tab name to write into
+
+function doPost(e) {
+  let body;
+  try {
+    body = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return respond({ ok: false, error: 'invalid JSON' });
+  }
+  if (!body || body.secret !== SECRET) {
+    return respond({ ok: false, error: 'bad secret' });
+  }
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sh = ss.getSheetByName(WORKSHEET) || ss.insertSheet(WORKSHEET);
+
+    // header row: use the sheet's existing header if present, else create it
+    let headers;
+    if (sh.getLastRow() === 0) {
+      headers = body.headers;
+      sh.getRange(1, 1, 1, headers.length).setValues([headers]);
+    } else {
+      headers = sh.getRange(1, 1, 1, sh.getLastColumn())
+                  .getValues()[0].map(String).filter(function (h) { return h; });
+    }
+
+    const keyIdx = headers.indexOf(body.key_column);
+
+    // existing key -> row number map for upserts
+    const existing = {};
+    const lastRow = sh.getLastRow();
+    if (keyIdx >= 0 && lastRow > 1) {
+      const keys = sh.getRange(2, keyIdx + 1, lastRow - 1, 1).getValues();
+      for (let i = 0; i < keys.length; i++) {
+        const k = String(keys[i][0]).trim().toLowerCase();
+        if (k) existing[k] = i + 2;
+      }
+    }
+
+    const appends = [];
+    let written = 0;
+    (body.rows || []).forEach(function (row) {
+      const values = headers.map(function (h) { return row[h] || ''; });
+      const key = keyIdx >= 0 ? String(values[keyIdx]).trim().toLowerCase() : '';
+      if (key && existing[key]) {
+        sh.getRange(existing[key], 1, 1, values.length).setValues([values]);
+      } else {
+        appends.push(values);
+        if (key) existing[key] = lastRow + appends.length;
+      }
+      written++;
+    });
+    if (appends.length) {
+      sh.getRange(sh.getLastRow() + 1, 1, appends.length, headers.length)
+        .setValues(appends);
+    }
+    return respond({ ok: true, written: written });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function respond(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
