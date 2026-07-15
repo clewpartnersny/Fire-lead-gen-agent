@@ -97,6 +97,11 @@ consolidators:
     aliases: [vsc fire]
     domains: [vscfs.com]
 
+  - name: Able Fire Prevention
+    sponsor: Multi-state consolidator (acquired Valley Fire Protection, Jul 2026)
+    aliases: [able fire prevention, valley fire protection]
+    domains: [ablefire.com]
+
 # Phrases in a company's own website text that indicate it is owned by
 # a parent/platform/sponsor (each hit is recorded as evidence).
 ownership_phrases:
