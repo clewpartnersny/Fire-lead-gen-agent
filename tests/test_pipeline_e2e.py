@@ -88,8 +88,7 @@ def test_full_pipeline_offline(tmp_path, monkeypatch):
     seed_ppp(db)
 
     assert add_acme(pipe) == 1
-    assert pipe.process_new(limit=10) == 1
-    assert pipe.export_ready() == 1
+    assert pipe.process_new(limit=10) == 1  # exports inline as it goes
 
     with open(config["storage"]["csv_fallback"]) as fh:
         rows = list(csv.DictReader(fh))
@@ -138,7 +137,7 @@ def test_no_ppp_match_is_not_rejected(tmp_path, monkeypatch):
 
     add_acme(pipe)
     pipe.process_new(limit=10)
-    assert pipe.export_ready() == 1
+    assert db.counts() == {"exported": 1}
     with open(config["storage"]["csv_fallback"]) as fh:
         row = list(csv.DictReader(fh))[0]
     assert row["PPP Loan"] == "N/A"

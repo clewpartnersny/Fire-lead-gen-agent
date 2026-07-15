@@ -161,6 +161,9 @@ class Pipeline:
                 log.exception("Failed processing %s", company.domain)
                 self.db.save_company(company, "error", "unhandled exception")
             processed += 1
+            # flush to the sheet as we go so rows appear within a minute
+            # of qualifying instead of at the end of a 30+ minute cycle
+            self.export_ready()
         return processed
 
     def _process_one(self, company: Company) -> None:
