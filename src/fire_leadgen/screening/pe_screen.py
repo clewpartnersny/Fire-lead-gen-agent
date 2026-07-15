@@ -75,18 +75,28 @@ class PeScreener:
             evidence.append("site mentions: " + ", ".join(sorted(set(phrase_hits))[:5]))
 
         # 3. acquisition news search ------------------------------------
+        # Search-term set from the research manual: Name + Acquired / Sale /
+        # Private Equity / Parent Company / Pitchbook (collapsed into two
+        # queries to conserve search quota).
         if news_search_fn and name:
-            try:
-                hits = news_search_fn(
-                    f'"{name}" (acquired OR acquisition OR "private equity")'
-                )
-            except Exception as exc:
-                log.debug("news search failed for %s: %s", name, exc)
-                hits = []
-            for h in hits[:10]:
-                blob = f"{h.get('title','')} {h.get('snippet','')}"
-                if lower_name and lower_name in blob.lower() and ACQUISITION_NEWS_RE.search(blob):
-                    evidence.append(f"news: {h.get('title','')[:100]} ({h.get('url','')})")
+            queries = [
+                f'"{name}" (acquired OR acquisition OR "private equity")',
+                f'"{name}" ("parent company" OR pitchbook OR sale)',
+            ]
+            for query in queries:
+                try:
+                    hits = news_search_fn(query)
+                except Exception as exc:
+                    log.debug("news search failed for %s: %s", name, exc)
+                    continue
+                found = False
+                for h in hits[:10]:
+                    blob = f"{h.get('title','')} {h.get('snippet','')}"
+                    if lower_name and lower_name in blob.lower() and ACQUISITION_NEWS_RE.search(blob):
+                        evidence.append(f"news: {h.get('title','')[:100]} ({h.get('url','')})")
+                        found = True
+                        break
+                if found:
                     break
 
         independence_hits = [p for p in self.independence_phrases if p in lower_text]

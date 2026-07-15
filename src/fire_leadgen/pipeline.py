@@ -6,17 +6,43 @@ run_cycle() forever for 24/7 operation.
 from __future__ import annotations
 
 import logging
+import time
 
 from .db import Db
 from .discovery import directories, places, search
-from .enrichment import hunter, owners, size
+from .enrichment import hunter, msa, owners, ppp, size
 from .extraction import website
 from .models import Company
 from .output.sheets import SheetWriter
 from .screening.pe_screen import PeScreener
-from .utils import HttpClient, normalize_domain
+from .utils import (
+    ADDRESS_RE,
+    HttpClient,
+    clean_company_name,
+    normalize_domain,
+    split_person_name,
+)
 
 log = logging.getLogger("fire_leadgen.pipeline")
+
+RESIDENTIAL_HINTS = ("residential", "homeowner", "home owner", "your home", "houses", "apartment")
+COMMERCIAL_HINTS = (
+    "commercial", "industrial", "facilities", "businesses", "restaurants",
+    "warehouses", "office buildings", "institutional", "municipal", "retail",
+)
+
+
+def _customer_type(site_text: str) -> str:
+    lower = site_text.lower()
+    res = any(h in lower for h in RESIDENTIAL_HINTS)
+    com = any(h in lower for h in COMMERCIAL_HINTS)
+    if res and com:
+        return "Commercial & Residential"
+    if res:
+        return "Residential"
+    if com:
+        return "Commercial"
+    return ""
 
 
 class Pipeline:
@@ -88,6 +114,11 @@ class Pipeline:
             company.phone = place.get("phone", "")
             company.google_rating = place.get("rating", "")
             company.google_reviews = place.get("reviews", "")
+            m = ADDRESS_RE.search(company.address)
+            if m:
+                company.city, company.state, company.zip = (
+                    m.group(1).strip(), m.group(2), m.group(3),
+                )
         return 1 if self.db.add_company(company) else 0
 
     # ------------------------------------------------------------------
@@ -107,6 +138,7 @@ class Pipeline:
     def _process_one(self, company: Company) -> None:
         pcfg = self.cfg["pipeline"]
         ecfg = self.cfg["enrichment"]
+        notes: list[str] = []
 
         # ---- extraction ------------------------------------------------
         crawl = website.crawl_site(company.website, self.http)
@@ -115,7 +147,7 @@ class Pipeline:
             return
         company.domain = crawl["domain"]
         company.website = crawl["website"]
-        company.name = crawl["site_name"] or company.name
+        company.name = clean_company_name(crawl["site_name"] or company.name)
 
         facts = website.extract_facts(crawl, pcfg.get("required_services_any", []))
         for field in ("phone", "email", "address", "city", "state", "zip"):
@@ -131,6 +163,10 @@ class Pipeline:
             self.db.save_company(company, "rejected", "no fire/life-safety services found")
             return
 
+        company.industry = pcfg.get("industry_label", "Fire Protection")
+        company.customer_type = _customer_type(crawl["text"])
+        company.msa = msa.assign_msa(company.city, company.state)
+
         # ---- PE / independence screening --------------------------------
         news_fn = None
         if pcfg.get("pe_news_search"):
@@ -143,6 +179,30 @@ class Pipeline:
         if company.pe_backed == "yes" and not pcfg.get("export_pe_backed"):
             self.db.save_company(company, "rejected", "PE-backed / consolidator")
             return
+        if company.pe_backed == "review":
+            notes.append(f"VERIFY OWNERSHIP - {company.pe_evidence}")
+
+        # ---- PPP loan -> revenue estimate (manual Step 4) ----------------
+        ppp_hit = ppp.lookup(self.db.conn, company.name, company.state)
+        if ppp_hit:
+            amount = ppp_hit["amount"]
+            min_ppp = pcfg.get("min_ppp_loan", 150_000)
+            if amount and amount < min_ppp:
+                self.db.save_company(
+                    company, "rejected", f"PPP loan ${amount:,.0f} below ${min_ppp:,.0f} minimum"
+                )
+                return
+            company.ppp_loan = str(int(amount)) if amount else "N/A"
+            company.ppp_jobs = str(ppp_hit["jobs"] or "")
+            multiplier = pcfg.get("ppp_revenue_multiplier", 15.4)
+            if amount:
+                est = int(amount * multiplier)
+                company.est_revenue = str(est)
+                min_rev = pcfg.get("min_est_revenue", 5_000_000)
+                if est < min_rev:
+                    notes.append(f"est revenue ${est:,} below ${min_rev:,} target")
+        else:
+            company.ppp_loan = "N/A"
 
         # ---- enrichment --------------------------------------------------
         hunter_data = hunter.domain_search(company.domain, self.http) if ecfg.get("hunter") else {}
@@ -159,28 +219,68 @@ class Pipeline:
             use_rocketreach=bool(ecfg.get("rocketreach")),
             use_hunter=bool(ecfg.get("hunter")),
         )
-        company.owner_name = owner["name"]
-        company.owner_title = owner["title"]
-        company.owner_email = owner["email"]
-        company.owner_phone = owner["phone"]
+        company.first_name, company.last_name = split_person_name(owner["name"])
+        company.position = owner["title"]
+        company.contact_email = owner["email"]
+        company.contact_phone = owner["phone"]
         company.owner_source = owner["source"]
         company.linkedin_url = owner.get("linkedin_url", "")
+        if owner.get("birth_year"):
+            try:
+                company.owner_age = str(int(time.strftime("%Y")) - int(owner["birth_year"]))
+            except ValueError:
+                pass
 
-        bucket, basis = size.estimate_size(
-            hunter_headcount=str(hunter_data.get("headcount", "")),
-            team_count=len(crawl["team"]),
-            locations=company.locations,
-            google_reviews=company.google_reviews,
-            email_count=len(hunter_data.get("emails", [])),
-        )
-        company.employee_estimate = bucket
-        company.size_basis = basis
+        # manual Step 5G: email-status labels for the sourcing team
+        if not owner["name"]:
+            company.email_status = "No Contact"
+        elif not company.contact_email:
+            company.email_status = "Needs Email"
+        elif ecfg.get("verify_emails") and ecfg.get("hunter"):
+            status = hunter.verify_email(company.contact_email, self.http)
+            if status:
+                notes.append(f"email {status} (Hunter verifier)")
+                if status == "invalid":
+                    company.contact_email = ""
+                    company.email_status = "Needs Email"
+        if company.email_status:
+            notes.append(company.email_status)
+
+        # ---- employees (PPP jobs > Hunter headcount > heuristics) --------
+        if company.ppp_jobs:
+            company.employees = company.ppp_jobs
+            company.size_basis = "PPP JobsReported"
+        else:
+            bucket, basis = size.estimate_size(
+                hunter_headcount=str(hunter_data.get("headcount", "")),
+                team_count=len(crawl["team"]),
+                locations=company.locations,
+                google_reviews=company.google_reviews,
+                email_count=len(hunter_data.get("emails", [])),
+            )
+            company.employees = bucket
+            company.size_basis = basis
+        if company.size_basis:
+            notes.append(f"size basis: {company.size_basis}")
+
+        # manual Step 3D: very large review counts need an ownership call
+        try:
+            if int(company.google_reviews or 0) >= 1000:
+                notes.append("1000+ Google reviews - call to confirm still founder/family owned")
+        except ValueError:
+            pass
+
+        if company.source:
+            notes.append(f"lead source: {company.source}")
+        company.notes = " | ".join(notes)[:1000]
 
         self.db.save_company(company, "ready")
         log.info(
-            "Qualified: %s (%s) owner=%s size=%s independent=%s",
-            company.name, company.domain, company.owner_name or "?",
-            company.employee_estimate or "?", company.independent,
+            "Qualified: %s (%s) owner=%s %s rev=%s independent=%s",
+            company.name, company.domain,
+            f"{company.first_name} {company.last_name}".strip() or "?",
+            company.email_status or "ok", company.est_revenue or "?",
+            company.independent,
         )
 
     # ------------------------------------------------------------------

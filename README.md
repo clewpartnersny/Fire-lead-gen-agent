@@ -91,18 +91,43 @@ agent is deliberately slow/polite). State persists in `./data`.
   manual dictates and as new acquisitions happen.**
 - **`config/sheet_columns.yaml`** — sheet template mapping (header → field).
 
-### Encoding the research manual
+### Research-manual rules (implemented)
 
-Rules from the client research manual map to config, not code:
+The Clew research manual's rules are encoded as follows:
 
-| Manual rule type | Where it goes |
+| Manual rule | Implementation |
 |---|---|
-| target geographies | `discovery.regions` |
-| service lines in/out of scope | `discovery.keywords`, `pipeline.required_services_any` |
-| who counts as "owner" | `enrichment.owner_titles` |
-| known consolidators / PE platforms | `pe_firms.yaml` `consolidators` |
-| disqualifying ownership language | `pe_firms.yaml` `ownership_phrases` |
-| sheet columns & order | `sheet_columns.yaml` |
+| Sheet template columns (Company Name … Notes) | `sheet_columns.yaml` — matches Research_Template.xlsx exactly |
+| Remove legal entity forms (LLC, Inc.) from names | `clean_company_name()` applied to every lead |
+| Website as bare domain (example.com) | `Company - Domain` column uses the normalized domain |
+| PPP loan ≥ $150k to qualify | `pipeline.min_ppp_loan` — rejects when a PPP match is below it |
+| Revenue = PPP × 15.4 (fire protection multiplier) | `pipeline.ppp_revenue_multiplier`; digits only, `N/A` when no PPP |
+| Employees from PPP "Jobs" column | PPP index `JobsReported` → `Employees` column |
+| Revenue > $5M target | `pipeline.min_est_revenue` — flags in Notes (doesn't reject) |
+| Ignore Google reviews for commercial-services sizing | reviews recorded but only used as a weak fallback signal |
+| Owner = most senior (Owner/CEO/President) | `enrichment.owner_titles` priority order |
+| NEVER upload generic emails (info@…) | generic inboxes are stripped from Contact Email |
+| Prefer professional email over personal | RocketReach professional-type emails preferred |
+| Verify emails before upload | Hunter email-verifier; invalid → dropped + "Needs Email" |
+| "No Contact" / "Needs Email" statuses | written to Notes per manual Step 5G |
+| Owner age (retirement signal) | RocketReach birth year when available; else manual step |
+| Organize by MSA | `enrichment/msa.py` city/state → MSA, fallback "ST (Other)" |
+| Acquisition checks (Name + Acquired/Sale/PE/Parent/Pitchbook) | PE screener news queries + consolidator list + site phrases |
+| 1000+ reviews → call to confirm ownership | flagged in Notes |
+| Company age 20+ / multiple locations are green flags | Year Founded + Locations columns populated from site |
+
+### PPP loan data (recommended setup)
+
+The manual's primary size signal is the PPP loan database. It's free,
+public SBA FOIA data. One-time setup:
+
+1. Download the loan CSVs from https://data.sba.gov/dataset/ppp-foia
+   (the `public_150k_plus` file alone covers every loan ≥ $150k and is
+   enough, since smaller loans are rejected anyway).
+2. Index locally: `fire-leadgen ppp-import path/to/public_150k_plus_*.csv`
+
+Every lead is then matched against the index automatically (largest draw
+wins), filling PPP Loan, Est. Revenue and Employees with zero API cost.
 
 ## Independence verdicts
 

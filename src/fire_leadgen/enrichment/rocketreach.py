@@ -56,6 +56,7 @@ def find_owner(company_name: str, domain: str, owner_titles: list[str]) -> dict:
         "email": "",
         "phone": "",
         "linkedin_url": profile.get("linkedin_url", ""),
+        "birth_year": "",
     }
 
 
@@ -94,10 +95,16 @@ def _lookup(person_id, headers: dict) -> dict | None:
     def _val(item):
         return item.get("email") or item.get("number") or "" if isinstance(item, dict) else str(item)
 
+    # prefer a professional (company-domain) email over personal webmail,
+    # per the research manual
+    pro = [e for e in emails if isinstance(e, dict) and e.get("type") == "professional"]
+    best_email = _val(pro[0]) if pro else (_val(emails[0]) if emails else "")
+
     return {
         "name": p.get("name", ""),
         "title": p.get("current_title", ""),
-        "email": _val(emails[0]) if emails else "",
+        "email": best_email,
         "phone": _val(phones[0]) if phones else "",
         "linkedin_url": p.get("linkedin_url", ""),
+        "birth_year": p.get("birth_year") or "",
     }

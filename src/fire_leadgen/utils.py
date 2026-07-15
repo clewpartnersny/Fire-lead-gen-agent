@@ -87,6 +87,50 @@ def first_email(text: str, domain: str = "") -> str:
     return candidates[0] if candidates else ""
 
 
+# "Acme Fire Protection, LLC" -> "Acme Fire Protection"  (research manual:
+# remove legal entity forms so outreach reads naturally)
+LEGAL_SUFFIX_RE = re.compile(
+    r"[,\s]+(llc|l\.l\.c\.|inc\.?|incorporated|corp\.?|corporation|"
+    r"ltd\.?|llp|lp|pllc|p\.?c\.?|co\.?)\s*$",
+    re.IGNORECASE,
+)
+
+# Generic inboxes must NEVER be uploaded as the owner's contact email
+# (research manual: outreach goes to the owner's direct email only).
+GENERIC_EMAIL_PREFIXES = {
+    "info", "sales", "office", "contact", "contactus", "admin", "support",
+    "service", "services", "hello", "mail", "team", "inquiries", "inquiry",
+    "accounting", "billing", "hr", "jobs", "careers", "marketing", "help",
+    "customerservice", "frontdesk", "reception", "dispatch", "estimating",
+    "estimates", "quotes", "general", "webmaster", "no-reply", "noreply",
+}
+
+
+def clean_company_name(name: str) -> str:
+    """Strip legal entity suffixes (LLC, Inc., Corp...) and tidy whitespace."""
+    name = (name or "").strip().rstrip(".,")
+    while True:
+        stripped = LEGAL_SUFFIX_RE.sub("", name).strip().rstrip(".,")
+        if stripped == name or not stripped:
+            return name
+        name = stripped
+
+
+def is_generic_email(email: str) -> bool:
+    prefix = (email or "").split("@")[0].lower().replace(".", "").replace("-", "")
+    return prefix in GENERIC_EMAIL_PREFIXES
+
+
+def split_person_name(full_name: str) -> tuple[str, str]:
+    """'John A. Smith' -> ('John', 'Smith')."""
+    parts = (full_name or "").split()
+    if not parts:
+        return "", ""
+    if len(parts) == 1:
+        return parts[0], ""
+    return parts[0], parts[-1]
+
+
 def now_iso() -> str:
     return time.strftime("%Y-%m-%d %H:%M:%S")
 

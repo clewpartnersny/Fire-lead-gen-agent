@@ -105,6 +105,19 @@ discovery:
     #   note: AFAA member list
 
 pipeline:
+  # Value for the sheet's "Industry" column.
+  industry_label: Fire Protection
+
+  # --- Research-manual thresholds ------------------------------------
+  # Only consider companies with PPP loans >= $150k (applied when a PPP
+  # match is found in the local PPP index; unknown PPP never rejects).
+  min_ppp_loan: 150000
+  # Fire Protection PPP-to-revenue multiplier (manual Step 4 table).
+  ppp_revenue_multiplier: 15.4
+  # Companies estimating below this revenue are FLAGGED in Notes (not
+  # rejected - manual says not to prematurely dismiss).
+  min_est_revenue: 5000000
+
   # A company must offer at least one of these to qualify (matched
   # against website text). Empty list = accept everything discovered.
   required_services_any:
@@ -139,6 +152,8 @@ pipeline:
 enrichment:
   hunter: true        # domain search (emails + company data) + email finder
   rocketreach: true   # owner/decision-maker lookup by title
+  verify_emails: true # run owner emails through Hunter's verifier; invalid
+                      # emails are dropped and the lead marked "Needs Email"
   # Titles that count as "owner" contacts, in priority order.
   owner_titles:
     - owner

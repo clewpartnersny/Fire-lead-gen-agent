@@ -53,6 +53,18 @@ def domain_search(domain: str, http: HttpClient) -> dict:
     }
 
 
+def verify_email(email: str, http: HttpClient) -> str:
+    """Return Hunter's verdict: 'valid', 'accept_all', 'invalid', ... ('' if no key)."""
+    if not _key() or not email:
+        return ""
+    resp = http.get(
+        f"{BASE}/email-verifier", params={"email": email, "api_key": _key()}
+    )
+    if resp is None:
+        return ""
+    return (resp.json().get("data", {}) or {}).get("status", "")
+
+
 def email_finder(domain: str, first_name: str, last_name: str, http: HttpClient) -> str:
     if not _key() or not (first_name and last_name):
         return ""

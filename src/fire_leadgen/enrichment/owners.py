@@ -3,13 +3,17 @@
   2. RocketReach person search (title = owner/president/CEO/...)
   3. Hunter domain-search results whose position matches an owner title
 Then fill in the owner's email via Hunter email-finder if still missing.
+
+Research-manual rules enforced here:
+  - the contact must be the most senior person (owner/CEO/president)
+  - generic inboxes (info@...) are never accepted as the owner's email
 """
 
 from __future__ import annotations
 
 import logging
 
-from ..utils import HttpClient
+from ..utils import HttpClient, is_generic_email
 from . import hunter, rocketreach
 
 log = logging.getLogger("fire_leadgen.owners")
@@ -25,8 +29,11 @@ def find_owner(
     use_rocketreach: bool = True,
     use_hunter: bool = True,
 ) -> dict:
-    """Return {name, title, email, phone, source, linkedin_url} (fields may be empty)."""
-    owner = {"name": "", "title": "", "email": "", "phone": "", "source": "", "linkedin_url": ""}
+    """Return {name, title, email, phone, source, linkedin_url, birth_year}."""
+    owner = {
+        "name": "", "title": "", "email": "", "phone": "",
+        "source": "", "linkedin_url": "", "birth_year": "",
+    }
 
     # 1. website team page --------------------------------------------
     match = _pick_by_title(
@@ -45,6 +52,7 @@ def find_owner(
                 email=rr.get("email", ""),
                 phone=rr.get("phone", ""),
                 linkedin_url=rr.get("linkedin_url", ""),
+                birth_year=str(rr.get("birth_year", "") or ""),
                 source="RocketReach",
             )
 
@@ -84,7 +92,13 @@ def find_owner(
             owner["email"] = rr.get("email", "")
             owner["phone"] = owner["phone"] or rr.get("phone", "")
             owner["linkedin_url"] = rr.get("linkedin_url", "")
+            owner["birth_year"] = owner["birth_year"] or str(rr.get("birth_year", "") or "")
             owner["source"] += " + RocketReach"
+
+    # manual rule: never accept a generic inbox as the owner's direct email
+    if owner["email"] and is_generic_email(owner["email"]):
+        log.debug("Dropping generic email %s for %s", owner["email"], company_name)
+        owner["email"] = ""
 
     return owner
 

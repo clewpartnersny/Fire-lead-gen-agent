@@ -50,10 +50,24 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("once", help="run a single discovery/process/export cycle and exit")
     sub.add_parser("export", help="re-export all 'ready' leads to the sheet")
     sub.add_parser("stats", help="show pipeline counts")
+    ppp_cmd = sub.add_parser(
+        "ppp-import",
+        help="index SBA PPP loan CSVs (data.sba.gov/dataset/ppp-foia) for size/revenue estimates",
+    )
+    ppp_cmd.add_argument("csv_files", nargs="+", help="PPP CSV file paths")
     args = parser.parse_args(argv)
 
     setup_logging(args.verbose)
     config = load_config(os.path.join(args.config_dir, "config.yaml"))
+
+    if args.command == "ppp-import":
+        from .enrichment import ppp
+
+        db = Db(config["storage"]["database"])
+        n = ppp.import_csvs(db.conn, args.csv_files)
+        print(f"Indexed {n} PPP loan rows")
+        return 0
+
     db, pipeline, scheduler = build(args.config_dir, config)
 
     if args.command == "run":
