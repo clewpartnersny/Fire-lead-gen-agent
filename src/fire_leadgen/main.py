@@ -38,6 +38,23 @@ def build(config_dir: str, config: dict) -> tuple[Db, Pipeline, Scheduler]:
     return db, pipeline, scheduler
 
 
+def _acquire_lock(path: str):
+    """Exclusive flock so only one 'run' instance works the database.
+    Returns an open file handle (keep it alive) or None if already held."""
+    import fcntl
+
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    handle = open(path, "w")
+    try:
+        fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        handle.close()
+        return None
+    handle.write(str(os.getpid()))
+    handle.flush()
+    return handle
+
+
 def test_sheet(config_dir: str, config: dict) -> int:
     """Send one labeled test row through the configured sheet output."""
     from .models import Company
@@ -112,7 +129,15 @@ def main(argv: list[str] | None = None) -> int:
     db, pipeline, scheduler = build(args.config_dir, config)
 
     if args.command == "run":
-        scheduler.run_forever()
+        lock_path = config["storage"]["database"] + ".lock"
+        lock = _acquire_lock(lock_path)
+        if lock is None:
+            print(f"Another 'fire-leadgen run' instance holds {lock_path}; exiting.")
+            return 1
+        try:
+            scheduler.run_forever()
+        finally:
+            lock.close()
     elif args.command == "once":
         scheduler.run_cycle()
     elif args.command == "export":
