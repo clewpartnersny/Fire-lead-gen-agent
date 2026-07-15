@@ -120,15 +120,18 @@ def test_full_pipeline_offline(tmp_path, monkeypatch):
     assert db.counts() == {"exported": 1}
 
 
-def test_ppp_below_minimum_rejected(tmp_path, monkeypatch):
+def test_ppp_below_minimum_kept_and_flagged(tmp_path, monkeypatch):
     config, db, pipe = build_pipeline(tmp_path, monkeypatch)
     monkeypatch.setattr(pipeline_mod.website, "crawl_site", lambda url, http: FAKE_CRAWL)
     seed_ppp(db, amount=90000.0, jobs=8)
 
     add_acme(pipe)
     pipe.process_new(limit=10)
-    assert pipe.export_ready() == 0
-    assert db.counts() == {"rejected": 1}
+    assert db.counts() == {"exported": 1}
+    with open(config["storage"]["csv_fallback"]) as fh:
+        row = list(csv.DictReader(fh))[0]
+    assert row["PPP Loan"] == "90000"
+    assert "below" in row["Notes"]
 
 
 def test_no_ppp_match_is_not_rejected(tmp_path, monkeypatch):

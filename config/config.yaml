@@ -144,8 +144,8 @@ pipeline:
   industry_label: Fire Protection
 
   # --- Research-manual thresholds ------------------------------------
-  # Only consider companies with PPP loans >= $150k (applied when a PPP
-  # match is found in the local PPP index; unknown PPP never rejects).
+  # PPP loans below this are FLAGGED in Notes (the lead is kept).
+  # Set to 0 to disable the flag entirely.
   min_ppp_loan: 150000
   # Fire Protection PPP-to-revenue multiplier (manual Step 4 table).
   ppp_revenue_multiplier: 15.4

@@ -257,11 +257,9 @@ class Pipeline:
         if ppp_hit:
             amount = ppp_hit["amount"]
             min_ppp = pcfg.get("min_ppp_loan", 150_000)
-            if amount and amount < min_ppp:
-                self.db.save_company(
-                    company, "rejected", f"PPP loan ${amount:,.0f} below ${min_ppp:,.0f} minimum"
-                )
-                return
+            if amount and min_ppp and amount < min_ppp:
+                # kept (not rejected) - just flagged for the sourcing team
+                notes.append(f"PPP ${amount:,.0f} below ${min_ppp:,.0f} threshold")
             company.ppp_loan = str(int(amount)) if amount else "N/A"
             company.ppp_jobs = str(ppp_hit["jobs"] or "")
             multiplier = pcfg.get("ppp_revenue_multiplier", 15.4)
