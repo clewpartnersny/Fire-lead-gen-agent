@@ -101,6 +101,29 @@ function doPost(e) {
   }
 }
 
+/**
+ * Read a tab back (secret-protected). Lets the research agents learn
+ * from human edits in the sheet: deleted rows, corrections, notes like
+ * "dead" / "PE owned" become training feedback.
+ * GET <url>?secret=...&worksheet=Tab%20Name
+ */
+function doGet(e) {
+  if (!e.parameter || e.parameter.secret !== SECRET) {
+    return respond({ ok: false, error: 'bad secret' });
+  }
+  const tab = e.parameter.worksheet || WORKSHEET;
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(tab);
+  if (!sh || sh.getLastRow() === 0) return respond({ ok: true, headers: [], rows: [] });
+  const values = sh.getDataRange().getValues();
+  const headers = (values.shift() || []).map(String);
+  const rows = values.map(function (r) {
+    const o = {};
+    headers.forEach(function (h, i) { if (h) o[h] = String(r[i] ?? ''); });
+    return o;
+  });
+  return respond({ ok: true, headers: headers, rows: rows });
+}
+
 function respond(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
