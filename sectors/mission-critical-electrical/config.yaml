@@ -1,7 +1,7 @@
 # Mission-Critical Electrical sector configuration.
 # NOTE: Focus: electrical contractors serving data centers / critical facilities.
 sector: Mission-Critical Electrical
-enabled: false
+enabled: true
 output:
   worksheet: Mission-Critical Electrical
 discovery:

@@ -1,7 +1,7 @@
 # HVAC sector configuration.
 # NOTE: Manual: Google reviews DO matter for residential HVAC (>200 = add).
 sector: HVAC
-enabled: false
+enabled: true
 output:
   worksheet: HVAC
 discovery:

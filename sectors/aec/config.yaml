@@ -1,7 +1,7 @@
 # AEC sector configuration.
 # NOTE: Professional services: contact must be the Managing Partner/Principal, match surnames in firm name (manual).
 sector: AEC
-enabled: false
+enabled: true
 output:
   worksheet: AEC
 discovery:
