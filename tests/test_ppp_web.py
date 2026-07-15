@@ -32,11 +32,35 @@ class FakeResp:
         self.url = url
 
 
-class FakeHttp:
-    """Serves canned pages by URL substring; records requests."""
+USASPENDING_JSON = {
+    "results": [
+        {"Recipient Name": "ACME FIRE PROTECTION LLC", "Loan Value": 325000.0,
+         "Place of Performance State Code": "CT"},
+        {"Recipient Name": "ACME FIRE PROTECTION LLC", "Loan Value": 180000.0,
+         "Place of Performance State Code": "CT"},
+        {"Recipient Name": "ACME FIRE PROTECTION LLC", "Loan Value": 500000.0,
+         "Place of Performance State Code": "AZ"},
+        {"Recipient Name": "UNRELATED PLUMBING CO", "Loan Value": 900000.0,
+         "Place of Performance State Code": "CT"},
+    ]
+}
 
-    def __init__(self, pages):
+
+class FakeJsonResp:
+    def __init__(self, payload, url):
+        self._payload = payload
+        self.url = url
+
+    def json(self):
+        return self._payload
+
+
+class FakeHttp:
+    """Serves canned pages (HTML for get, JSON for post) by URL substring."""
+
+    def __init__(self, pages, json_pages=None):
         self.pages = pages
+        self.json_pages = json_pages or {}
         self.requests = []
 
     def get(self, url, **kwargs):
@@ -46,8 +70,23 @@ class FakeHttp:
                 return FakeResp(html, url)
         return None
 
+    def post(self, url, **kwargs):
+        self.requests.append(url)
+        for fragment, payload in self.json_pages.items():
+            if fragment in url:
+                return FakeJsonResp(payload, url)
+        return None
 
-def test_propublica_lookup_matches_state():
+
+def test_usaspending_lookup_filters_state_and_name():
+    http = FakeHttp({}, json_pages={"usaspending.gov": USASPENDING_JSON})
+    hit = ppp_web.lookup_web("Acme Fire Protection", "CT", http)
+    assert hit["amount"] == 325000.0  # largest CT draw; AZ and unrelated ignored
+    assert hit["source"] == "USAspending"
+    assert hit["matched_name"] == "ACME FIRE PROTECTION LLC"
+
+
+def test_propublica_fallback_when_usaspending_empty():
     http = FakeHttp({
         "propublica.org/coronavirus/bailouts/search": PROPUBLICA_SEARCH_HTML,
         "bailouts/loans/acme-fire-protection-llc-123": PROPUBLICA_DETAIL_HTML,

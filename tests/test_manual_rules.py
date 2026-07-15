@@ -25,6 +25,16 @@ def test_generic_emails_rejected():
     assert not is_generic_email("john.smith@acmefire.com")
 
 
+def test_clean_city():
+    from fire_leadgen.utils import clean_city
+
+    assert clean_city("Highland Avenue Cheshire") == "Cheshire"
+    assert clean_city("Main Street Suite 200 Stamford") == "Stamford"
+    assert clean_city("Stamford") == "Stamford"
+    assert clean_city("New Haven") == "New Haven"
+    assert clean_city("") == ""
+
+
 def test_split_person_name():
     assert split_person_name("John Smith") == ("John", "Smith")
     assert split_person_name("John A. Smith") == ("John", "Smith")

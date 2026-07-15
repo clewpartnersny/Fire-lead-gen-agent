@@ -104,6 +104,11 @@ discovery:
     - findlaw.com
     - superpages.com
     - city-data.com
+    - nsc.org
+    - fireprotectionfinder.com
+    - birdeye.com
+    - expertise.com
+    - threebestrated.com
 
   # Industry directory / association member pages to harvest company
   # links from (manual Methods D & E). Each page is fetched ONCE and all
@@ -148,8 +153,10 @@ pipeline:
   # rejected - manual says not to prematurely dismiss).
   min_est_revenue: 5000000
 
-  # A company must offer at least one of these to qualify (matched
-  # against website text). Empty list = accept everything discovered.
+  # A company must match at least min_service_matches of these services
+  # (against website text) to qualify. One lone match (e.g. a chimney
+  # sweep mentioning "fire safety") is not a fire protection company.
+  min_service_matches: 2
   required_services_any:
     - fire alarm
     - fire suppression

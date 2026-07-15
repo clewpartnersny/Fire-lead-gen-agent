@@ -43,18 +43,24 @@ class HttpClient:
         self._last_request = 0.0
 
     def get(self, url: str, **kwargs) -> requests.Response | None:
+        return self._request("get", url, **kwargs)
+
+    def post(self, url: str, **kwargs) -> requests.Response | None:
+        return self._request("post", url, **kwargs)
+
+    def _request(self, method: str, url: str, **kwargs) -> requests.Response | None:
         wait = self.delay - (time.time() - self._last_request)
         if wait > 0:
             time.sleep(wait)
         self._last_request = time.time()
         try:
-            resp = self.session.get(url, timeout=self.timeout, **kwargs)
+            resp = self.session.request(method, url, timeout=self.timeout, **kwargs)
             if resp.status_code >= 400:
-                log.debug("GET %s -> %s", url, resp.status_code)
+                log.debug("%s %s -> %s", method.upper(), url, resp.status_code)
                 return None
             return resp
         except requests.RequestException as exc:
-            log.debug("GET %s failed: %s", url, exc)
+            log.debug("%s %s failed: %s", method.upper(), url, exc)
             return None
 
 
@@ -119,6 +125,31 @@ def clean_company_name(name: str) -> str:
 def is_generic_email(email: str) -> bool:
     prefix = (email or "").split("@")[0].lower().replace(".", "").replace("-", "")
     return prefix in GENERIC_EMAIL_PREFIXES
+
+
+STREET_SUFFIXES = {
+    "street", "st", "avenue", "ave", "road", "rd", "drive", "dr", "lane",
+    "ln", "boulevard", "blvd", "court", "place", "pl", "way", "highway",
+    "hwy", "pike", "turnpike", "tpke", "route", "rte", "circle", "cir",
+    "terrace", "ter", "parkway", "pkwy", "plaza", "suite", "ste", "floor",
+    "unit", "building", "bldg",
+}
+
+
+def clean_city(city: str) -> str:
+    """Fix street fragments leaking into a parsed city, e.g.
+    'Highland Avenue Cheshire' -> 'Cheshire' (comma-less addresses)."""
+    tokens = (city or "").replace(",", " ").split()
+    last_suffix = -1
+    for i, tok in enumerate(tokens):
+        if tok.lower().rstrip(".") in STREET_SUFFIXES:
+            last_suffix = i
+    if last_suffix >= 0:
+        rest = tokens[last_suffix + 1:]
+        while rest and any(ch.isdigit() for ch in rest[0]):
+            rest = rest[1:]
+        return " ".join(rest)
+    return " ".join(tokens)
 
 
 def split_person_name(full_name: str) -> tuple[str, str]:

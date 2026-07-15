@@ -18,6 +18,7 @@ from .screening.pe_screen import PeScreener
 from .utils import (
     ADDRESS_RE,
     HttpClient,
+    clean_city,
     clean_company_name,
     normalize_domain,
     split_person_name,
@@ -134,7 +135,7 @@ class Pipeline:
             m = ADDRESS_RE.search(company.address)
             if m:
                 company.city, company.state, company.zip = (
-                    m.group(1).strip(), m.group(2), m.group(3),
+                    clean_city(m.group(1)), m.group(2), m.group(3),
                 )
         return 1 if self.db.add_company(company) else 0
 
@@ -176,8 +177,14 @@ class Pipeline:
 
         # ---- qualification ----------------------------------------------
         required = pcfg.get("required_services_any", [])
-        if required and not company.services:
-            self.db.save_company(company, "rejected", "no fire/life-safety services found")
+        n_matches = len([s for s in company.services.split(",") if s.strip()])
+        min_matches = pcfg.get("min_service_matches", 2) if required else 0
+        if required and n_matches < min_matches:
+            self.db.save_company(
+                company, "rejected",
+                f"only {n_matches} fire/life-safety service signal(s) "
+                f"(need {min_matches})",
+            )
             return
 
         company.industry = pcfg.get("industry_label", "Fire Protection")

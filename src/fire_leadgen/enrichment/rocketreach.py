@@ -6,12 +6,17 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 
 import requests
 
 log = logging.getLogger("fire_leadgen.rocketreach")
 
 BASE = "https://api.rocketreach.co/api/v2"
+
+
+def _norm(text: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", (text or "").lower())
 
 
 def _headers() -> dict | None:
@@ -24,29 +29,38 @@ def _headers() -> dict | None:
 def find_owner(company_name: str, domain: str, owner_titles: list[str]) -> dict:
     """Search people at the company whose title matches owner_titles.
 
-    Returns {name, title, email, phone, linkedin_url} or {}.
+    RocketReach's employer search is fuzzy (searching "Stamford Fire
+    Protection" can return anyone at any "Fire Protection" worldwide), so
+    every candidate profile must pass _employer_matches before we spend a
+    lookup credit on it.
+
+    Returns {name, title, email, phone, linkedin_url, birth_year} or {}.
     """
     headers = _headers()
     if headers is None:
         return {}
-    query: dict = {"current_employer": [company_name or domain]}
-    if owner_titles:
-        query["current_title"] = owner_titles[:6]
-    try:
-        resp = requests.post(
-            f"{BASE}/person/search",
-            headers=headers,
-            json={"query": query, "page_size": 5},
-            timeout=30,
-        )
-        if resp.status_code != 200:
-            log.debug("rocketreach search %s: %s", resp.status_code, resp.text[:200])
+    # quoted = exact-phrase employer match; fall back to unquoted
+    for employer in (f'"{company_name}"', company_name or domain):
+        query: dict = {"current_employer": [employer]}
+        if owner_titles:
+            query["current_title"] = owner_titles[:6]
+        try:
+            resp = requests.post(
+                f"{BASE}/person/search",
+                headers=headers,
+                json={"query": query, "page_size": 10},
+                timeout=30,
+            )
+            if resp.status_code != 200:
+                log.debug("rocketreach search %s: %s", resp.status_code, resp.text[:200])
+                return {}
+            profiles = resp.json().get("profiles", [])
+        except requests.RequestException as exc:
+            log.debug("rocketreach search failed: %s", exc)
             return {}
-        profiles = resp.json().get("profiles", [])
-    except requests.RequestException as exc:
-        log.debug("rocketreach search failed: %s", exc)
-        return {}
-
+        profiles = [p for p in profiles if _employer_matches(p, company_name, domain)]
+        if profiles:
+            break
     profile = _best_profile(profiles, owner_titles)
     if not profile:
         return {}
@@ -58,6 +72,25 @@ def find_owner(company_name: str, domain: str, owner_titles: list[str]) -> dict:
         "linkedin_url": profile.get("linkedin_url", ""),
         "birth_year": "",
     }
+
+
+def _employer_matches(profile: dict, company_name: str, domain: str) -> bool:
+    """Only accept US profiles whose employer really is this company."""
+    country = (profile.get("country_code") or profile.get("country") or "").upper()
+    if country and country not in ("US", "UNITED STATES"):
+        return False
+    prof_domain = (profile.get("current_employer_domain") or "").lower()
+    if domain and prof_domain and prof_domain.endswith(domain.lower()):
+        return True
+    emp = _norm(profile.get("current_employer") or "")
+    comp = _norm(company_name)
+    if not emp or not comp:
+        return False
+    if emp == comp or comp in emp:
+        return True
+    # employer is a substring of our name ("Fire Protection" vs
+    # "Stamford Fire Protection") only counts if it's most of the name
+    return emp in comp and len(emp) >= 0.75 * len(comp)
 
 
 def _best_profile(profiles: list[dict], owner_titles: list[str]) -> dict | None:

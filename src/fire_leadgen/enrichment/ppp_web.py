@@ -1,10 +1,14 @@
-"""Live PPP-loan lookup against public web databases - no CSV download
-needed. Tries ProPublica's Coronavirus Bailouts database first, then
-FederalPay's PPP search. Hits and misses are cached in the local DB (via
-ppp.store / ppp.cache_miss) so each company is fetched at most once.
+"""Live PPP-loan lookup - no CSV download needed.
 
-These are HTML pages, not APIs, so parsing is deliberately defensive:
-any layout change degrades to "no match" rather than bad data.
+Primary source: the official USAspending.gov API (PPP loans are SBA
+assistance awards there; documented JSON API, no scraping). Fallbacks:
+ProPublica's Coronavirus Bailouts database and FederalPay's PPP search
+(HTML, and both may 403 from datacenter IPs). Hits and misses are cached
+in the local DB (via ppp.store / ppp.cache_miss) so each company is
+fetched at most once.
+
+Parsing is deliberately defensive: any change on the source side
+degrades to "no match" rather than bad data.
 """
 
 from __future__ import annotations
@@ -15,11 +19,12 @@ from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
 
-from ..utils import HttpClient
+from ..utils import HttpClient, clean_company_name
 from .ppp import normalize_name
 
 log = logging.getLogger("fire_leadgen.ppp_web")
 
+USASPENDING_URL = "https://api.usaspending.gov/api/v2/search/spending_by_award/"
 PROPUBLICA_SEARCH = "https://projects.propublica.org/coronavirus/bailouts/search"
 FEDERALPAY_SEARCH = "https://www.federalpay.org/paycheck-protection-program/search"
 
@@ -29,7 +34,12 @@ JOBS_RE = re.compile(r"([\d,]+)\s*jobs(?:\s+reported)?", re.IGNORECASE)
 
 def lookup_web(name: str, state: str, http: HttpClient) -> dict:
     """Return {amount, jobs, matched_name, source} or {}."""
-    for provider, label in ((_propublica, "ProPublica"), (_federalpay, "FederalPay")):
+    providers = (
+        (_usaspending, "USAspending"),
+        (_propublica, "ProPublica"),
+        (_federalpay, "FederalPay"),
+    )
+    for provider, label in providers:
         try:
             hit = provider(name, state, http)
         except Exception as exc:
@@ -43,6 +53,38 @@ def lookup_web(name: str, state: str, http: HttpClient) -> dict:
             )
             return hit
     return {}
+
+
+def _usaspending(name: str, state: str, http: HttpClient) -> dict:
+    """PPP/SBA loan awards from the official USAspending.gov API.
+    Note: USAspending doesn't carry PPP jobs-reported, so jobs stays 0
+    and the pipeline falls back to other employee signals.
+    """
+    payload = {
+        "filters": {
+            "recipient_search_text": [clean_company_name(name)[:100]],
+            "award_type_codes": ["07", "08"],  # direct + guaranteed loans
+            "time_period": [{"start_date": "2020-03-01", "end_date": "2021-12-31"}],
+        },
+        "fields": ["Recipient Name", "Loan Value", "Place of Performance State Code"],
+        "limit": 50,
+    }
+    resp = http.post(USASPENDING_URL, json=payload)
+    if resp is None:
+        return {}
+    state_u = (state or "").strip().upper()
+    best: dict = {}
+    for row in resp.json().get("results", []):
+        found_name = row.get("Recipient Name") or ""
+        amount = float(row.get("Loan Value") or 0)
+        row_state = (row.get("Place of Performance State Code") or "").upper()
+        if amount <= 0 or not _names_match(name, found_name):
+            continue
+        if state_u and row_state and row_state != state_u:
+            continue
+        if amount > best.get("amount", 0):
+            best = {"amount": amount, "jobs": 0, "matched_name": found_name}
+    return best
 
 
 def _names_match(wanted: str, found: str) -> bool:

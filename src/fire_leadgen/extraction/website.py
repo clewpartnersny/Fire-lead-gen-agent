@@ -15,6 +15,7 @@ from ..utils import (
     ADDRESS_RE,
     HttpClient,
     YEAR_RE,
+    clean_city,
     first_email,
     normalize_domain,
     normalize_phone,
@@ -88,7 +89,7 @@ def extract_facts(crawl: dict, service_keywords: list[str]) -> dict:
     m = ADDRESS_RE.search(text)
     if m:
         address = m.group(0)
-        city, state, zipcode = m.group(1).strip(), m.group(2), m.group(3)
+        city, state, zipcode = clean_city(m.group(1)), m.group(2), m.group(3)
 
     year = ""
     ym = YEAR_RE.search(text)
