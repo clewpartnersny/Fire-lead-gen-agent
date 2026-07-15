@@ -27,8 +27,9 @@ columns:
   PPP Loan: ppp_loan
   Est. Revenue: est_revenue
   Employees: employees
+  # Locations holds the office list ("City, ST; City, ST"); when no list
+  # was found on the site it falls back to the numeric count.
   Locations: locations
   Year Founded: year_founded
   Notes: notes
   Lead Source: lead_source
-  Location: office_locations

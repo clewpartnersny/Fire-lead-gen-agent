@@ -85,13 +85,20 @@ def find_owner(
                 owner["email"] = email
                 owner["source"] += " + Hunter email-finder"
 
-    # last resort: RocketReach contact details for a website-found owner
-    if use_rocketreach and owner["name"] and not owner["email"] and owner["source"] == "company website":
-        rr = rocketreach.find_owner(company_name, domain, [owner["title"].lower()] if owner["title"] else owner_titles)
-        if rr.get("name", "").lower() == owner["name"].lower():
-            owner["email"] = rr.get("email", "")
+    # RocketReach fill-in for an owner found elsewhere (website/Hunter):
+    # fetch the phone (mobile preferred), LinkedIn and birth year even
+    # when we already have an email - the sheet wants the phone too.
+    if (
+        use_rocketreach
+        and owner["name"]
+        and (not owner["email"] or not owner["phone"])
+        and owner["source"] != "RocketReach"
+    ):
+        rr = rocketreach.find_owner(company_name, domain, owner_titles)
+        if _same_person(rr.get("name", ""), owner["name"]):
+            owner["email"] = owner["email"] or rr.get("email", "")
             owner["phone"] = owner["phone"] or rr.get("phone", "")
-            owner["linkedin_url"] = rr.get("linkedin_url", "")
+            owner["linkedin_url"] = owner["linkedin_url"] or rr.get("linkedin_url", "")
             owner["birth_year"] = owner["birth_year"] or str(rr.get("birth_year", "") or "")
             owner["source"] += " + RocketReach"
 
@@ -101,6 +108,14 @@ def find_owner(
         owner["email"] = ""
 
     return owner
+
+
+def _same_person(a: str, b: str) -> bool:
+    """'Ned Nichols' == 'Ned Nichols'; also tolerate middle names/initials."""
+    pa, pb = a.lower().split(), b.lower().split()
+    if not pa or not pb:
+        return False
+    return pa[0] == pb[0] and pa[-1] == pb[-1]
 
 
 def _pick_by_title(people: list[dict], owner_titles: list[str]) -> dict | None:

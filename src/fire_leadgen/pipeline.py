@@ -344,6 +344,11 @@ class Pipeline:
             notes.append(f"lead source: {company.source}")
         company.notes = " | ".join(notes)[:1000]
 
+        # the sheet's Locations column shows the office list when we have
+        # one (count stays as fallback and was already used for sizing)
+        if company.office_locations:
+            company.locations = company.office_locations
+
         self.db.save_company(company, "ready")
         log.info(
             "Qualified: %s (%s) owner=%s %s rev=%s independent=%s",

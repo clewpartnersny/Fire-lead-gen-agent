@@ -7,6 +7,7 @@ from __future__ import annotations
 import logging
 import os
 import re
+import time
 
 import requests
 
@@ -39,19 +40,24 @@ def find_owner(company_name: str, domain: str, owner_titles: list[str]) -> dict:
     headers = _headers()
     if headers is None:
         return {}
-    # quoted = exact-phrase employer match; fall back to unquoted
-    for employer in (f'"{company_name}"', company_name or domain):
-        query: dict = {"current_employer": [employer]}
-        if owner_titles:
-            query["current_title"] = owner_titles[:6]
+    # Strategy 1: exact-phrase employer, ALL employees, rank titles
+    # client-side (the API's title filter returns 0 when combined with a
+    # quoted employer). Strategy 2: fuzzy employer + server title filter.
+    attempts = (
+        {"current_employer": [f'"{company_name}"']},
+        {"current_employer": [company_name or domain],
+         "current_title": owner_titles[:6]} if owner_titles else None,
+    )
+    profile = None
+    for query in filter(None, attempts):
         try:
             resp = requests.post(
                 f"{BASE}/person/search",
                 headers=headers,
-                json={"query": query, "page_size": 10},
+                json={"query": query, "page_size": 25},
                 timeout=30,
             )
-            if resp.status_code != 200:
+            if resp.status_code not in (200, 201):
                 log.debug("rocketreach search %s: %s", resp.status_code, resp.text[:200])
                 return {}
             profiles = resp.json().get("profiles", [])
@@ -59,9 +65,9 @@ def find_owner(company_name: str, domain: str, owner_titles: list[str]) -> dict:
             log.debug("rocketreach search failed: %s", exc)
             return {}
         profiles = [p for p in profiles if _employer_matches(p, company_name, domain)]
-        if profiles:
+        profile = _best_profile(profiles, owner_titles)
+        if profile:
             break
-    profile = _best_profile(profiles, owner_titles)
     if not profile:
         return {}
     return _lookup(profile.get("id"), headers) or {
@@ -94,6 +100,8 @@ def _employer_matches(profile: dict, company_name: str, domain: str) -> bool:
 
 
 def _best_profile(profiles: list[dict], owner_titles: list[str]) -> dict | None:
+    """Highest-priority title match; someone with NO matching title never
+    qualifies (we must not pick a dispatcher just because they came first)."""
     def rank(p: dict) -> int:
         title = (p.get("current_title") or "").lower()
         for i, t in enumerate(owner_titles):
@@ -101,26 +109,34 @@ def _best_profile(profiles: list[dict], owner_titles: list[str]) -> dict | None:
                 return i
         return len(owner_titles)
 
-    profiles = sorted(profiles, key=rank)
-    return profiles[0] if profiles else None
+    matching = [p for p in profiles if rank(p) < len(owner_titles)]
+    matching.sort(key=rank)
+    return matching[0] if matching else None
 
 
 def _lookup(person_id, headers: dict) -> dict | None:
     """Reveal contact details for a profile (consumes a lookup credit)."""
     if not person_id:
         return None
-    try:
-        resp = requests.get(
-            f"{BASE}/person/lookup",
-            headers=headers,
-            params={"id": person_id},
-            timeout=30,
-        )
-        if resp.status_code not in (200, 201):
+    # Lookups are async on RocketReach's side (status: progress) - retry
+    # a few times until phones/emails are populated or we give up.
+    p: dict = {}
+    for _attempt in range(4):
+        try:
+            resp = requests.get(
+                f"{BASE}/person/lookup",
+                headers=headers,
+                params={"id": person_id},
+                timeout=60,
+            )
+            if resp.status_code not in (200, 201):
+                return None
+            p = resp.json()
+        except requests.RequestException:
             return None
-        p = resp.json()
-    except requests.RequestException:
-        return None
+        if p.get("status") != "progress" or p.get("phones") or p.get("emails"):
+            break
+        time.sleep(4)
 
     emails = p.get("emails") or []
     phones = p.get("phones") or []

@@ -27,7 +27,7 @@ def test_csv_fallback_matches_template(tmp_path, monkeypatch):
         "Contact Phone Number", "LinkedIn", "Owner Age", "Company - Domain",
         "Industry", "Customer Type", "City", "State", "MSA", "Google Reviews",
         "PPP Loan", "Est. Revenue", "Employees", "Locations", "Year Founded",
-        "Notes", "Lead Source", "Location",
+        "Notes", "Lead Source",
     ]
     assert row[header.index("Company Name")] == "Acme Fire Protection"
     assert row[header.index("Company - Domain")] == "acmefire.com"
