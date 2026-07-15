@@ -1,3 +1,23 @@
+# Clew Lead-Gen Agents (multi-sector)
+
+A 24/7 head-of-research system: one codebase, one supervisor
+(`fire-leadgen run-all`), and a sub-agent per industry defined entirely
+by config in `sectors/<name>/` (keywords, qualification rules, PPP
+revenue multiplier, PE/consolidator buyer list, sheet tab). All sectors
+share one Google Spreadsheet - each writes to its own tab.
+
+Current sectors: **Fire Protection** (live), **HVAC**, **AEC**, **RIA**,
+**Mission-Critical Electrical**, **Power T&D Maintenance** (staged,
+`enabled: false` until their tabs + the updated Apps Script are deployed).
+
+**Adding an industry:** copy a sector folder, edit `config.yaml`
+(keywords, multiplier from the research manual's table, worksheet name)
+and `pe_firms.yaml` (that sector's consolidators/buyers), create the tab,
+set `enabled: true`. The section below documents the original fire
+protection build - it all applies per-sector.
+
+---
+
 # Fire Protection Lead-Gen Agent
 
 A 24/7 agent that continuously discovers **independent (non-PE-backed) fire

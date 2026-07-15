@@ -1,0 +1,121 @@
+# RIA - known consolidators/acquirers (seed list; extend from
+# the sector's Buyers tab and acquisition news the agent surfaces).
+consolidators:
+- name: Focus Financial Partners
+  sponsor: CD&R / Stone Point
+  aliases:
+  - focus financial
+  domains:
+  - focusfinancialpartners.com
+- name: Creative Planning
+  sponsor: General Atlantic/TPG
+  aliases:
+  - creative planning
+  domains:
+  - creativeplanning.com
+- name: Mercer Advisors
+  sponsor: Oak Hill/Genstar/Altas
+  aliases:
+  - mercer advisors
+  domains:
+  - merceradvisors.com
+- name: Wealth Enhancement Group
+  sponsor: TA Associates/Onex
+  aliases:
+  - wealth enhancement group
+  domains:
+  - wealthenhancement.com
+- name: Mariner Wealth Advisors
+  sponsor: Leonard Green/Penfund
+  aliases:
+  - mariner wealth
+  domains:
+  - marinerwealthadvisors.com
+- name: Hightower Advisors
+  sponsor: Thomas H. Lee Partners
+  aliases:
+  - hightower
+  domains:
+  - hightoweradvisors.com
+- name: Beacon Pointe Advisors
+  sponsor: KKR
+  aliases:
+  - beacon pointe
+  domains:
+  - beaconpointe.com
+- name: Corient
+  sponsor: CI Financial
+  aliases:
+  - corient
+  - ci private wealth
+  domains:
+  - corient.com
+- name: Savant Wealth Management
+  sponsor: Kelso & Company
+  aliases:
+  - savant wealth
+  domains:
+  - savantwealth.com
+- name: Carson Group
+  sponsor: Bain Capital
+  aliases:
+  - carson wealth
+  - carson group
+  domains:
+  - carsongroup.com
+- name: EP Wealth Advisors
+  sponsor: Berkshire Partners
+  aliases:
+  - ep wealth
+  domains:
+  - epwealth.com
+- name: Allworth Financial
+  sponsor: Lightyear Capital
+  aliases:
+  - allworth financial
+  domains:
+  - allworthfinancial.com
+- name: CAPTRUST
+  sponsor: GTCR/Carlyle
+  aliases:
+  - captrust
+  domains:
+  - captrust.com
+- name: Cerity Partners
+  sponsor: Genstar
+  aliases:
+  - cerity partners
+  domains:
+  - ceritypartners.com
+- name: Wealthspire Advisors
+  sponsor: NFP/Aon
+  aliases:
+  - wealthspire
+  domains:
+  - wealthspire.com
+ownership_phrases:
+- portfolio company
+- private equity
+- acquired by
+- has been acquired
+- an affiliate of
+- a division of
+- a subsidiary of
+- wholly owned subsidiary
+- backed by
+- family of companies
+- part of the .* group
+- now part of
+- joined forces with
+- proud member of the .* family
+independence_phrases:
+- family owned
+- family-owned
+- locally owned
+- independently owned
+- owner operated
+- owner-operated
+- veteran owned
+- woman owned
+- second generation
+- third generation

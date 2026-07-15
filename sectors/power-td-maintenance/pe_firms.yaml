@@ -1,0 +1,73 @@
+# Power T&D Maintenance - known consolidators/acquirers (seed list; extend from
+# the sector's Buyers tab and acquisition news the agent surfaces).
+consolidators:
+- name: Quanta Services
+  sponsor: Public company
+  aliases:
+  - quanta services
+  domains:
+  - quantaservices.com
+- name: MYR Group
+  sponsor: Public company
+  aliases:
+  - myr group
+  domains:
+  - myrgroup.com
+- name: MasTec
+  sponsor: Public company (owns IEA)
+  aliases:
+  - mastec
+  - infrastructure and energy alternatives
+  domains:
+  - mastec.com
+- name: Primoris Services
+  sponsor: Public company
+  aliases:
+  - primoris
+  domains:
+  - prim.com
+- name: Pike Corporation
+  sponsor: Large private consolidator
+  aliases:
+  - pike electric
+  - pike corporation
+  domains:
+  - pike.com
+- name: Asplundh
+  sponsor: Large family-owned consolidator
+  aliases:
+  - asplundh
+  domains:
+  - asplundh.com
+- name: Centuri Group
+  sponsor: Public company
+  aliases:
+  - centuri
+  domains:
+  - centuri.com
+ownership_phrases:
+- portfolio company
+- private equity
+- acquired by
+- has been acquired
+- an affiliate of
+- a division of
+- a subsidiary of
+- wholly owned subsidiary
+- backed by
+- family of companies
+- part of the .* group
+- now part of
+- joined forces with
+- proud member of the .* family
+independence_phrases:
+- family owned
+- family-owned
+- locally owned
+- independently owned
+- owner operated
+- owner-operated
+- veteran owned
+- woman owned
+- second generation
+- third generation

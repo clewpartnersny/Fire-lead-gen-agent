@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import logging
 import signal
+import threading
 import time
 
 from .db import Db
@@ -19,12 +20,20 @@ log = logging.getLogger("fire_leadgen.scheduler")
 class Scheduler:
     def __init__(self, config: dict, db: Db, pipeline: Pipeline):
         self.cfg = config["scheduler"]
+        self.sector = config.get("sector", "")
         self.db = db
         self.pipeline = pipeline
         self.queries = build_queries(config["discovery"])
         self._stop = False
-        signal.signal(signal.SIGTERM, self._handle_stop)
-        signal.signal(signal.SIGINT, self._handle_stop)
+        # signal handlers can only be installed from the main thread;
+        # under `run-all` each sector runs in its own thread and the
+        # supervisor propagates shutdown via stop()
+        if threading.current_thread() is threading.main_thread():
+            signal.signal(signal.SIGTERM, self._handle_stop)
+            signal.signal(signal.SIGINT, self._handle_stop)
+
+    def stop(self) -> None:
+        self._stop = True
 
     def _handle_stop(self, signum, frame):
         log.info("Received signal %s - finishing current step then stopping", signum)
@@ -43,16 +52,16 @@ class Scheduler:
         exported = self.pipeline.export_ready()
         counts = self.db.counts()
         log.info(
-            "Cycle done: +%d discovered, %d processed, %d exported | totals: %s",
-            added, processed, exported,
+            "[%s] Cycle done: +%d discovered, %d processed, %d exported | totals: %s",
+            self.sector or "?", added, processed, exported,
             ", ".join(f"{k}={v}" for k, v in sorted(counts.items())),
         )
 
     def run_forever(self) -> None:
         delay = self.cfg.get("cycle_delay_seconds", 300)
         log.info(
-            "Starting 24/7 loop: %d queries in rotation, cycle delay %ds",
-            len(self.queries), delay,
+            "[%s] Starting 24/7 loop: %d queries in rotation, cycle delay %ds",
+            self.sector or "?", len(self.queries), delay,
         )
         while not self._stop:
             try:

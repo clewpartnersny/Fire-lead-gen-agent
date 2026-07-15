@@ -6,6 +6,6 @@ services:
     volumes:
       - ./data:/app/data
       - ./out:/app/out
-      - ./config:/app/config
+      - ./sectors:/app/sectors
       # mount your Google service-account key at the path set in .env
       - ./service_account.json:/app/service_account.json:ro

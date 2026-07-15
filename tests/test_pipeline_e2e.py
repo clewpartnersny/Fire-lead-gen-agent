@@ -12,7 +12,7 @@ from fire_leadgen.output.sheets import SheetWriter
 from fire_leadgen.pipeline import Pipeline
 from fire_leadgen.screening.pe_screen import PeScreener
 
-CONFIG_DIR = os.path.join(os.path.dirname(__file__), "..", "config")
+CONFIG_DIR = os.path.join(os.path.dirname(__file__), "..", "sectors", "fire-protection")
 
 SITE_TEXT = """
 Acme Fire Protection LLC - family owned and operated since 1987.

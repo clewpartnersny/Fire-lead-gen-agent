@@ -4,7 +4,7 @@ import os
 from fire_leadgen.models import Company
 from fire_leadgen.output.sheets import SheetWriter
 
-CONFIG = os.path.join(os.path.dirname(__file__), "..", "config", "sheet_columns.yaml")
+CONFIG = os.path.join(os.path.dirname(__file__), "..", "sectors", "fire-protection", "sheet_columns.yaml")
 
 
 def test_csv_fallback_matches_template(tmp_path, monkeypatch):

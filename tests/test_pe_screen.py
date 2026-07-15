@@ -2,7 +2,7 @@ import os
 
 from fire_leadgen.screening.pe_screen import PeScreener
 
-CONFIG = os.path.join(os.path.dirname(__file__), "..", "config", "pe_firms.yaml")
+CONFIG = os.path.join(os.path.dirname(__file__), "..", "sectors", "fire-protection", "pe_firms.yaml")
 
 
 def screener():

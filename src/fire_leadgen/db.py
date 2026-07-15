@@ -32,7 +32,9 @@ CREATE INDEX IF NOT EXISTS idx_companies_status ON companies(status);
 class Db:
     def __init__(self, path: str):
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-        self.conn = sqlite3.connect(path)
+        # check_same_thread=False: under `run-all` the connection is built
+        # in the main thread but used exclusively by one sector thread
+        self.conn = sqlite3.connect(path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self.conn.executescript(SCHEMA)
         self.conn.commit()

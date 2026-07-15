@@ -24,7 +24,9 @@
  */
 
 const SECRET = 'change-me-to-a-long-random-string';
-const WORKSHEET = 'Sheet1';   // tab name to write into
+// Fallback tab; each request may name its own tab via body.worksheet,
+// which is how multiple sectors share one spreadsheet.
+const WORKSHEET = 'Sheet1';
 
 function doPost(e) {
   let body;
@@ -41,7 +43,8 @@ function doPost(e) {
   lock.waitLock(30000);
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sh = ss.getSheetByName(WORKSHEET) || ss.insertSheet(WORKSHEET);
+    const tab = body.worksheet || WORKSHEET;
+    const sh = ss.getSheetByName(tab) || ss.insertSheet(tab);
 
     // header row: use the sheet's existing header if present, else create
     // it; any NEW headers in the payload are appended to the right so

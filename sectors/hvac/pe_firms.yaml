@@ -1,0 +1,121 @@
+# HVAC - known consolidators/acquirers (seed list; extend from
+# the sector's Buyers tab and acquisition news the agent surfaces).
+consolidators:
+- name: Service Champions
+  sponsor: PE-backed platform (Odyssey)
+  aliases:
+  - service champions
+  domains:
+  - servicechampions.com
+- name: Sila Services
+  sponsor: Morgan Stanley Capital Partners
+  aliases:
+  - sila services
+  - sila heating
+  domains:
+  - silaservices.com
+- name: Horizon Services
+  sponsor: PE-backed platform
+  aliases:
+  - horizon services
+  domains:
+  - horizonservices.com
+- name: Legacy Service Partners
+  sponsor: Gridiron Capital
+  aliases:
+  - legacy service partners
+  domains:
+  - legacyservicepartners.com
+- name: Wrench Group
+  sponsor: Leonard Green & Partners
+  aliases:
+  - wrench group
+  domains:
+  - wrenchgroup.com
+- name: Apex Service Partners
+  sponsor: Alpine Investors
+  aliases:
+  - apex service partners
+  domains:
+  - apexservicepartners.com
+- name: TurnPoint Services
+  sponsor: OMERS/Trilantic
+  aliases:
+  - turnpoint services
+  domains:
+  - turnpointservices.com
+- name: Southern Home Services
+  sponsor: PE-backed platform
+  aliases:
+  - southern home services
+  domains:
+  - southernhomeservices.com
+- name: Heartland Home Services
+  sponsor: PE-backed platform
+  aliases:
+  - heartland home services
+  domains:
+  - heartlandhomeservices.com
+- name: Ace Hardware Home Services
+  sponsor: Ace Hardware (corporate)
+  aliases:
+  - ace hardware home services
+  domains:
+  - acehardwarehomeservices.com
+- name: Authority Brands
+  sponsor: Apax Partners
+  aliases:
+  - authority brands
+  domains:
+  - authoritybrands.com
+- name: ARS / Rescue Rooter
+  sponsor: American Residential Services
+  aliases:
+  - rescue rooter
+  - american residential services
+  domains:
+  - ars.com
+- name: Neighborly
+  sponsor: KKR
+  aliases:
+  - neighborly
+  domains:
+  - neighborlybrands.com
+- name: Comfort Systems USA
+  sponsor: Public company (NYSE FIX)
+  aliases:
+  - comfort systems
+  domains:
+  - comfortsystemsusa.com
+- name: EMCOR Group
+  sponsor: Public company (NYSE EME)
+  aliases:
+  - emcor
+  domains:
+  - emcorgroup.com
+ownership_phrases:
+- portfolio company
+- private equity
+- acquired by
+- has been acquired
+- an affiliate of
+- a division of
+- a subsidiary of
+- wholly owned subsidiary
+- backed by
+- family of companies
+- part of the .* group
+- now part of
+- joined forces with
+- proud member of the .* family
+independence_phrases:
+- family owned
+- family-owned
+- locally owned
+- independently owned
+- owner operated
+- owner-operated
+- veteran owned
+- woman owned
+- second generation
+- third generation

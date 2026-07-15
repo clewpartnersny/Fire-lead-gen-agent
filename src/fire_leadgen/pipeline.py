@@ -262,12 +262,14 @@ class Pipeline:
                 notes.append(f"PPP ${amount:,.0f} below ${min_ppp:,.0f} threshold")
             company.ppp_loan = str(int(amount)) if amount else "N/A"
             company.ppp_jobs = str(ppp_hit["jobs"] or "")
-            multiplier = pcfg.get("ppp_revenue_multiplier", 15.4)
-            if amount:
+            # sectors without a known PPP multiplier set it null -> the
+            # loan/jobs still export, revenue stays blank
+            multiplier = pcfg.get("ppp_revenue_multiplier")
+            if amount and multiplier:
                 est = int(amount * multiplier)
                 company.est_revenue = str(est)
                 min_rev = pcfg.get("min_est_revenue", 5_000_000)
-                if est < min_rev:
+                if min_rev and est < min_rev:
                     notes.append(f"est revenue ${est:,} below ${min_rev:,} target")
         else:
             company.ppp_loan = "N/A"

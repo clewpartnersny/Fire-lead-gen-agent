@@ -1,0 +1,121 @@
+# AEC - known consolidators/acquirers (seed list; extend from
+# the sector's Buyers tab and acquisition news the agent surfaces).
+consolidators:
+- name: AECOM
+  sponsor: Public company
+  aliases:
+  - aecom
+  domains:
+  - aecom.com
+- name: Jacobs
+  sponsor: Public company
+  aliases:
+  - jacobs engineering
+  domains:
+  - jacobs.com
+- name: WSP
+  sponsor: Public company
+  aliases:
+  - wsp global
+  - wsp usa
+  domains:
+  - wsp.com
+- name: Stantec
+  sponsor: Public company
+  aliases:
+  - stantec
+  domains:
+  - stantec.com
+- name: Tetra Tech
+  sponsor: Public company
+  aliases:
+  - tetra tech
+  domains:
+  - tetratech.com
+- name: Arcadis
+  sponsor: Public company
+  aliases:
+  - arcadis
+  domains:
+  - arcadis.com
+- name: NV5
+  sponsor: Public company, serial acquirer
+  aliases:
+  - nv5
+  domains:
+  - nv5.com
+- name: Bowman Consulting
+  sponsor: Public company, serial acquirer
+  aliases:
+  - bowman consulting
+  domains:
+  - bowman.com
+- name: Salas O'Brien
+  sponsor: PE-backed serial acquirer
+  aliases:
+  - salas o'brien
+  - salas obrien
+  domains:
+  - salasobrien.com
+- name: IMEG
+  sponsor: PE-backed serial acquirer
+  aliases:
+  - imeg
+  domains:
+  - imegcorp.com
+- name: Trilon Group
+  sponsor: Alpine Investors platform
+  aliases:
+  - trilon group
+  domains:
+  - trilongroup.com
+- name: Verdantas
+  sponsor: PE-backed platform
+  aliases:
+  - verdantas
+  domains:
+  - verdantas.com
+- name: Atwell
+  sponsor: Serial acquirer
+  aliases:
+  - atwell
+  domains:
+  - atwell-group.com
+- name: Universal Engineering Sciences
+  sponsor: PE-backed platform
+  aliases:
+  - universal engineering sciences
+  domains:
+  - universalengineering.com
+- name: Colliers Engineering & Design
+  sponsor: Colliers (public)
+  aliases:
+  - colliers engineering
+  domains:
+  - collierseng.com
+ownership_phrases:
+- portfolio company
+- private equity
+- acquired by
+- has been acquired
+- an affiliate of
+- a division of
+- a subsidiary of
+- wholly owned subsidiary
+- backed by
+- family of companies
+- part of the .* group
+- now part of
+- joined forces with
+- proud member of the .* family
+independence_phrases:
+- family owned
+- family-owned
+- locally owned
+- independently owned
+- owner operated
+- owner-operated
+- veteran owned
+- woman owned
+- second generation
+- third generation

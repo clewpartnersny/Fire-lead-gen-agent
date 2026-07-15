@@ -8,7 +8,7 @@ from fire_leadgen.output.sheets import SheetWriter
 
 import os
 
-CONFIG = os.path.join(os.path.dirname(__file__), "..", "config", "sheet_columns.yaml")
+CONFIG = os.path.join(os.path.dirname(__file__), "..", "sectors", "fire-protection", "sheet_columns.yaml")
 
 
 class FakeResp:

@@ -1,0 +1,35 @@
+# =====================================================================
+# Google Sheet column mapping - matches the Clew Research Template
+# (Research_Template.xlsx) exactly, in order.
+#
+# Each entry: <Sheet column header>: <internal field name>
+# Rows are de-duplicated by the key_column (compared as bare domains).
+# =====================================================================
+
+key_column: Company - Domain
+
+columns:
+  Company Name: name
+  First Name: first_name
+  Last Name: last_name
+  Position: position
+  Contact Email: contact_email
+  Contact Phone Number: contact_phone
+  LinkedIn: linkedin_url
+  Owner Age: owner_age
+  Company - Domain: domain
+  Industry: industry
+  Customer Type: customer_type
+  City: city
+  State: state
+  MSA: msa
+  Google Reviews: google_reviews
+  PPP Loan: ppp_loan
+  Est. Revenue: est_revenue
+  Employees: employees
+  # Locations holds the office list ("City, ST; City, ST"); when no list
+  # was found on the site it falls back to the numeric count.
+  Locations: locations
+  Year Founded: year_founded
+  Notes: notes
+  Lead Source: lead_source

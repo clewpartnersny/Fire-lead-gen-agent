@@ -28,14 +28,19 @@ log = logging.getLogger("fire_leadgen.sheets")
 
 
 class SheetWriter:
-    def __init__(self, columns_path: str, csv_fallback: str):
+    def __init__(self, columns_path: str, csv_fallback: str, output_cfg: dict | None = None):
         with open(columns_path) as fh:
             cfg = yaml.safe_load(fh)
+        output_cfg = output_cfg or {}
         self.columns: dict[str, str] = cfg["columns"]  # header -> field
         self.key_column: str = cfg.get("key_column", "Website")
         self.csv_fallback = csv_fallback
         self._ws = None
         self.webhook_url = os.environ.get("SHEETS_WEBHOOK_URL", "")
+        # per-sector tab in the shared spreadsheet
+        self.worksheet = output_cfg.get("worksheet") or os.environ.get(
+            "GOOGLE_SHEET_WORKSHEET", "Leads"
+        )
         self._connect()
 
     def _connect(self) -> None:
@@ -56,13 +61,12 @@ class SheetWriter:
 
             gc = gspread.service_account(filename=sa_path)
             sh = gc.open_by_key(sheet_id)
-            ws_name = os.environ.get("GOOGLE_SHEET_WORKSHEET", "Leads")
             try:
-                self._ws = sh.worksheet(ws_name)
+                self._ws = sh.worksheet(self.worksheet)
             except gspread.WorksheetNotFound:
-                self._ws = sh.add_worksheet(ws_name, rows=2000, cols=len(self.columns))
+                self._ws = sh.add_worksheet(self.worksheet, rows=2000, cols=len(self.columns))
             self._ensure_header()
-            log.info("Connected to Google Sheet %s / %s", sheet_id, ws_name)
+            log.info("Connected to Google Sheet %s / %s", sheet_id, self.worksheet)
         except Exception as exc:
             log.error("Google Sheets connection failed (%s); using CSV fallback", exc)
             self._ws = None
@@ -135,6 +139,7 @@ class SheetWriter:
             rows.append({h: str(data.get(f, "") or "") for h, f in self.columns.items()})
         payload = {
             "secret": os.environ.get("SHEETS_WEBHOOK_SECRET", ""),
+            "worksheet": self.worksheet,
             "key_column": self.key_column,
             "headers": headers,
             "rows": rows,

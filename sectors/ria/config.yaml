@@ -1,0 +1,128 @@
+# RIA sector configuration.
+# NOTE: Size = AUM (from Form ADV / SEC adviserinfo.sec.gov), not PPP. Great directory: adviserinfo.sec.gov (Form ADV data is public).
+sector: RIA
+enabled: false
+output:
+  worksheet: RIA
+discovery:
+  query_templates:
+  - '{keyword} {region}'
+  - best {keyword} {region}
+  - top rated {keyword} {region}
+  - family owned {keyword} {region}
+  - independent {keyword} {region}
+  - list of {keyword} companies {region}
+  keywords:
+  - registered investment advisor
+  - wealth management firm
+  - financial planning firm
+  - investment advisory firm
+  - fee-only financial advisor
+  - fiduciary wealth advisor
+  regions:
+  - New York NY
+  - Long Island NY
+  - New Jersey
+  - Connecticut
+  - Pennsylvania
+  - Massachusetts
+  - Florida
+  - Texas
+  - California
+  - Illinois
+  - Ohio
+  - Georgia
+  - North Carolina
+  - Michigan
+  - Virginia
+  - Washington
+  - Arizona
+  - Colorado
+  - Tennessee
+  - Maryland
+  results_per_query: 20
+  use_places: true
+  use_llm_suggestions: true
+  llm_suggestions_per_cycle: 10
+  ignore_domains:
+  - yelp.com
+  - yellowpages.com
+  - angi.com
+  - angieslist.com
+  - houzz.com
+  - homeadvisor.com
+  - thumbtack.com
+  - bbb.org
+  - facebook.com
+  - instagram.com
+  - linkedin.com
+  - twitter.com
+  - x.com
+  - youtube.com
+  - wikipedia.org
+  - indeed.com
+  - glassdoor.com
+  - ziprecruiter.com
+  - mapquest.com
+  - manta.com
+  - dnb.com
+  - zoominfo.com
+  - buzzfile.com
+  - chamberofcommerce.com
+  - porch.com
+  - buildzoom.com
+  - procore.com
+  - amazon.com
+  - reddit.com
+  - nextdoor.com
+  - crunchbase.com
+  - pitchbook.com
+  - google.com
+  - findlaw.com
+  - superpages.com
+  - city-data.com
+  - nsc.org
+  - fireprotectionfinder.com
+  - birdeye.com
+  - expertise.com
+  - threebestrated.com
+  directory_pages: []
+pipeline:
+  industry_label: RIA
+  min_ppp_loan: 150000
+  ppp_revenue_multiplier: null
+  min_est_revenue: 5000000
+  min_service_matches: 2
+  required_services_any:
+  - wealth management
+  - investment advisory
+  - financial planning
+  - portfolio management
+  - retirement planning
+  - fiduciary
+  - investment management
+  - asset management
+  export_pe_backed: false
+  pe_news_search: true
+enrichment:
+  hunter: true
+  rocketreach: true
+  verify_emails: true
+  ppp_web: true
+  owner_titles:
+  - founder
+  - managing partner
+  - president
+  - ceo
+  - chief executive
+  - principal
+  - owner
+  - managing director
+scheduler:
+  cycle_delay_seconds: 300
+  queries_per_cycle: 10
+  request_delay_seconds: 2
+  max_companies_per_cycle: 25
+storage:
+  database: data/ria.sqlite3
+  csv_fallback: out/ria.csv

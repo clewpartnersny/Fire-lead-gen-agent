@@ -1,0 +1,75 @@
+# Mission-Critical Electrical - known consolidators/acquirers (seed list; extend from
+# the sector's Buyers tab and acquisition news the agent surfaces).
+consolidators:
+- name: Quanta Services
+  sponsor: Public company (owns Cupertino Electric)
+  aliases:
+  - quanta services
+  - cupertino electric
+  domains:
+  - quantaservices.com
+  - cei.com
+- name: IES Holdings
+  sponsor: Public company
+  aliases:
+  - ies holdings
+  - ies commercial
+  domains:
+  - ies-co.com
+- name: EMCOR Group
+  sponsor: Public company
+  aliases:
+  - emcor
+  domains:
+  - emcorgroup.com
+- name: MYR Group
+  sponsor: Public company (Sturgeon Electric)
+  aliases:
+  - myr group
+  - sturgeon electric
+  domains:
+  - myrgroup.com
+- name: ArchKey Solutions
+  sponsor: PE-backed platform
+  aliases:
+  - archkey
+  domains:
+  - archkey.com
+- name: Comfort Systems USA
+  sponsor: Public company
+  aliases:
+  - comfort systems
+  domains:
+  - comfortsystemsusa.com
+- name: Rosendin
+  sponsor: Employee-owned (not a target)
+  aliases:
+  - rosendin
+  domains:
+  - rosendin.com
+ownership_phrases:
+- portfolio company
+- private equity
+- acquired by
+- has been acquired
+- an affiliate of
+- a division of
+- a subsidiary of
+- wholly owned subsidiary
+- backed by
+- family of companies
+- part of the .* group
+- now part of
+- joined forces with
+- proud member of the .* family
+independence_phrases:
+- family owned
+- family-owned
+- locally owned
+- independently owned
+- owner operated
+- owner-operated
+- veteran owned
+- woman owned
+- second generation
+- third generation

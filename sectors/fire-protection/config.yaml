@@ -6,6 +6,15 @@
 # client research manual should be encoded here and in pe_firms.yaml.
 # =====================================================================
 
+# Sector identity - used by `run-all` and logging.
+sector: Fire Protection
+enabled: true
+
+# Sheet output: every sector shares the spreadsheet + webhook configured
+# in .env and writes to its own worksheet (tab).
+output:
+  worksheet: Sheet1
+
 discovery:
   # Query templates. {keyword} and {region} are substituted from the
   # lists below; every keyword x region combination becomes a search.
@@ -218,5 +227,5 @@ scheduler:
   max_companies_per_cycle: 25
 
 storage:
-  database: data/leads.sqlite3
-  csv_fallback: out/leads.csv
+  database: data/fire-protection.sqlite3
+  csv_fallback: out/fire-protection.csv
