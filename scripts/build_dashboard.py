@@ -203,14 +203,13 @@ header.top{display:flex;justify-content:space-between;align-items:baseline;
 /* connectors */
 .stem{width:2px;height:22px;background:var(--line);margin:0 auto;}
 .bus{height:2px;background:var(--line);margin:0 24px;}
-/* avatars */
-.avatar{width:46px;height:46px;border-radius:50%;flex:none;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:16px;color:#fff;letter-spacing:.02em;
-  background:var(--av,#888);position:relative;}
-.avatar.lg{width:56px;height:56px;font-size:19px;}
+/* avatars - illustrated portraits */
+.avatar{width:48px;height:48px;border-radius:50%;flex:none;
+  position:relative;background:var(--line);overflow:visible;}
+.avatar svg{width:100%;height:100%;display:block;border-radius:50%;}
+.avatar.lg{width:60px;height:60px;}
 .avatar .st{position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;
-  border-radius:50%;border:2.5px solid var(--surface);}
+  border-radius:50%;border:2.5px solid var(--surface);z-index:1;}
 .avatar .st.on{background:var(--ok);} .avatar .st.off{background:var(--staged);}
 .who{display:flex;align-items:center;gap:12px;min-width:0;}
 .who .nm{font-weight:800;font-size:16px;letter-spacing:-.01em;line-height:1.2;}
@@ -303,7 +302,7 @@ h2.section{font-size:13px;text-transform:uppercase;letter-spacing:.09em;
   <div class="eyebrow">Head of research</div>
   <div class="head-card" style="margin-top:8px">
     <div class="who" style="margin-bottom:10px">
-      <div class="avatar lg" style="--av:#B34700">C<span class="st on"></span></div>
+      <div class="avatar lg" data-face="Claude"><span class="st on"></span></div>
       <div><div class="nm" style="font-size:18px">Claude</div>
         <div class="rl">Head of Research — this chat session</div></div>
     </div>
@@ -318,14 +317,14 @@ h2.section{font-size:13px;text-transform:uppercase;letter-spacing:.09em;
   <h2 class="section">Support staff — automated routines</h2>
   <div class="staff-grid">
     <div class="staff">
-      <div class="who"><div class="avatar" style="--av:#5B6472">WO<span class="st on"></span></div>
+      <div class="who"><div class="avatar" data-face="Walt Okonkwo"><span class="st on"></span></div>
         <div><div class="nm">Walt Okonkwo</div><div class="rl">Operations — Watchdog</div></div></div>
       <div class="s-when mono">hourly</div>
       <div class="s-what">Keeps every analyst running, restores the environment
         after outages, snapshots databases, escalates quota problems.</div>
     </div>
     <div class="staff">
-      <div class="who"><div class="avatar" style="--av:#4A6FA5">TR<span class="st on"></span></div>
+      <div class="who"><div class="avatar" data-face="Tess Romano"><span class="st on"></span></div>
         <div><div class="nm">Tess Romano</div><div class="rl">Performance Coach — Trainer</div></div></div>
       <div class="s-when mono">daily · 9:00 ET</div>
       <div class="s-what">Refines each analyst from outcomes: search-yield tuning,
@@ -333,7 +332,7 @@ h2.section{font-size:13px;text-transform:uppercase;letter-spacing:.09em;
         the sheet. Safe changes auto-applied; the rest proposed to you.</div>
     </div>
     <div class="staff">
-      <div class="who"><div class="avatar" style="--av:#7A5EA0">DM<span class="st on"></span></div>
+      <div class="who"><div class="avatar" data-face="Dee Marsh"><span class="st on"></span></div>
         <div><div class="nm">Dee Marsh</div><div class="rl">Market Intelligence — Deal Watch</div></div></div>
       <div class="s-when mono">daily · 8:30 ET</div>
       <div class="s-what">Sweeps each sector's M&amp;A news; flags acquired
@@ -361,6 +360,60 @@ const D = JSON.parse(document.getElementById('data').textContent);
 const $ = (s,el=document)=>el.querySelector(s);
 const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const money = v => v==null?'—':'$'+Number(v).toLocaleString();
+
+// ---- illustrated portraits -------------------------------------------
+const FACES = {
+  'Claude':        {skin:'#E2AF82',hair:'#57504B',style:'short',glasses:1,shirt:'#B34700',bg:'#F3DCC8'},
+  'Walt Okonkwo':  {skin:'#6B4226',hair:'#241F1C',style:'buzz', beard:1,  shirt:'#5B6472',bg:'#DDE2E9'},
+  'Tess Romano':   {skin:'#EDBD96',hair:'#3B2E2A',style:'long',           shirt:'#4A6FA5',bg:'#DAE5F1'},
+  'Dee Marsh':     {skin:'#C68863',hair:'#2E2420',style:'curly',          shirt:'#7A5EA0',bg:'#E6DFF0'},
+  'Fiona Brandt':  {skin:'#F1C8A8',hair:'#A5502E',style:'long',           shirt:'#C0532F',bg:'#F4DED3'},
+  'Hank Mercer':   {skin:'#E8B58C',hair:'#5B4232',style:'short',beard:1,  shirt:'#3E7CB1',bg:'#D9E6F0'},
+  'Ava Lindqvist': {skin:'#F4D3B3',hair:'#C9A15A',style:'bun',  glasses:1,shirt:'#6B8E4E',bg:'#E2EAD8'},
+  'Rhea Kapoor':   {skin:'#C08A5F',hair:'#1E1A1F',style:'long',           shirt:'#8A5EA6',bg:'#E8DFF0'},
+  'Miles Okafor':  {skin:'#7A4A2B',hair:'#1C1815',style:'short',glasses:1,shirt:'#B58329',bg:'#F0E5CF'},
+  'Petra Vance':   {skin:'#EFC49E',hair:'#9A9184',style:'pixie',          shirt:'#4E8E86',bg:'#D9E9E6'},
+};
+function faceSVG(name){
+  const f = FACES[name] || FACES['Claude'];
+  const p = [];
+  p.push(`<circle cx="32" cy="32" r="32" fill="${f.bg}"/>`);
+  if (f.style==='long')
+    p.push(`<path d="M19 26 Q18 11 32 11 Q46 11 45 26 L46 48 Q46 54 39 54 L25 54 Q18 54 18 48 Z" fill="${f.hair}"/>`);
+  if (f.style==='curly')
+    p.push(`<circle cx="21" cy="21" r="7" fill="${f.hair}"/><circle cx="28" cy="15.5" r="7" fill="${f.hair}"/>`+
+           `<circle cx="36" cy="15.5" r="7" fill="${f.hair}"/><circle cx="43" cy="21" r="7" fill="${f.hair}"/>`+
+           `<circle cx="18.5" cy="28" r="5" fill="${f.hair}"/><circle cx="45.5" cy="28" r="5" fill="${f.hair}"/>`);
+  p.push(`<path d="M9 64 Q9 45 32 45 Q55 45 55 64 Z" fill="${f.shirt}"/>`);
+  p.push(`<path d="M27.5 34 h9 v8 q0 4 -4.5 4 q-4.5 0 -4.5 -4 Z" fill="${f.skin}"/>`);
+  p.push(`<circle cx="20.5" cy="27.5" r="2.7" fill="${f.skin}"/><circle cx="43.5" cy="27.5" r="2.7" fill="${f.skin}"/>`);
+  p.push(`<ellipse cx="32" cy="26" rx="11.6" ry="12.6" fill="${f.skin}"/>`);
+  const tops = {
+    short:`M20.4 26 Q20 12.6 32 12.6 Q44 12.6 43.6 26 Q43.6 20.4 39.8 18.9 Q35.8 17.4 32 17.4 Q28.2 17.4 24.2 18.9 Q20.4 20.4 20.4 26 Z`,
+    buzz:`M20.6 23.5 Q21.4 13.4 32 13.4 Q42.6 13.4 43.4 23.5 Q37.8 18.3 32 18.3 Q26.2 18.3 20.6 23.5 Z`,
+    pixie:`M20.2 28 Q18.6 11.8 33 12.2 Q45.4 12.8 43.8 24.5 Q42 18.8 35.6 18.2 Q38.6 15.8 33.6 14.8 Q23.6 14.4 22.2 20 Q21 23.6 20.2 28 Z`,
+    long:`M20.4 27 Q20 13 32 13 Q44 13 43.6 27 Q43.6 20.2 38.6 18.8 Q34.4 17.6 29.2 18.4 Q21.8 19.8 20.4 27 Z`,
+    bun:`M20.4 26 Q20 13 32 13 Q44 13 43.6 26 Q43.6 20.6 39.2 19 Q35.4 17.8 32 17.8 Q28.6 17.8 24.8 19 Q20.4 20.6 20.4 26 Z`,
+    curly:`M20.8 25 Q21.4 15.2 32 15.2 Q42.6 15.2 43.2 25 Q39.2 19.4 32 19.4 Q24.8 19.4 20.8 25 Z`,
+  };
+  if (f.style==='bun') p.push(`<circle cx="32" cy="10.4" r="4.6" fill="${f.hair}"/>`);
+  p.push(`<path d="${tops[f.style]||tops.short}" fill="${f.hair}"/>`);
+  if (f.beard)
+    p.push(`<path d="M21.8 28.5 Q22.6 40.2 32 40.2 Q41.4 40.2 42.2 28.5 Q42.6 32 41 34.8 Q38.4 38.6 32 38.6 Q25.6 38.6 23 34.8 Q21.4 32 21.8 28.5 Z" fill="${f.hair}"/>`);
+  p.push(`<rect x="24.6" y="23.2" width="5" height="1.7" rx=".85" fill="${f.hair}"/>`+
+         `<rect x="34.4" y="23.2" width="5" height="1.7" rx=".85" fill="${f.hair}"/>`);
+  p.push(`<circle cx="27.2" cy="27.5" r="1.55" fill="#2A2622"/><circle cx="36.8" cy="27.5" r="1.55" fill="#2A2622"/>`);
+  p.push(`<path d="M31.4 28.6 Q30.8 31.4 32.4 31.9" stroke="rgba(60,30,10,.28)" stroke-width="1.1" fill="none" stroke-linecap="round"/>`);
+  p.push(`<path d="M28.6 34.4 Q32 37 35.4 34.4" stroke="rgba(90,40,25,.75)" stroke-width="1.5" fill="none" stroke-linecap="round"/>`);
+  if (f.glasses)
+    p.push(`<g stroke="#33302C" stroke-width="1.3" fill="none"><circle cx="27.2" cy="27.5" r="3.7"/>`+
+           `<circle cx="36.8" cy="27.5" r="3.7"/><path d="M30.9 27.3 h2.2"/></g>`);
+  return `<svg viewBox="0 0 64 64" role="img" aria-label="${esc(name)}">${p.join('')}</svg>`;
+}
+// fill the static avatars (head + support staff)
+document.querySelectorAll('[data-face]').forEach(el=>{
+  el.insertAdjacentHTML('afterbegin', faceSVG(el.dataset.face));
+});
 
 // KPI row
 $('#kpis').innerHTML = [
@@ -391,7 +444,7 @@ $('#grid').innerHTML = D.sectors.map((s,i)=>{
   return `<button class="agent" data-i="${i}">
     <div class="row">
       <div class="who">
-        <div class="avatar" style="--av:${HUES[i%HUES.length]}">${esc(initials(who))}<span class="st ${s.enabled?'on':'off'}"></span></div>
+        <div class="avatar">${faceSVG(who)}<span class="st ${s.enabled?'on':'off'}"></span></div>
         <div><div class="nm">${esc(who)}</div>
           <div class="rl">${esc(s.name)} Research Analyst</div></div>
       </div>
@@ -419,7 +472,7 @@ function openDrawer(i){
   $('#drawer').innerHTML = `
     <button class="close" id="dclose">Close ✕</button>
     <div class="who" style="margin:4px 0 2px">
-      <div class="avatar lg" style="--av:${HUES[i%HUES.length]}">${esc(initials(who))}<span class="st ${s.enabled?'on':'off'}"></span></div>
+      <div class="avatar lg">${faceSVG(who)}<span class="st ${s.enabled?'on':'off'}"></span></div>
       <div><h2 style="margin:0">${esc(who)}</h2>
         <div class="rl">${esc(s.name)} Research Analyst · ${s.enabled?'live':'staged'}</div></div>
     </div>
