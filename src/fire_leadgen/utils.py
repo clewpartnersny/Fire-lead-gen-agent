@@ -113,8 +113,16 @@ GENERIC_EMAIL_PREFIXES = {
 
 
 def clean_company_name(name: str) -> str:
-    """Strip legal entity suffixes (LLC, Inc., Corp...) and tidy whitespace."""
-    name = (name or "").strip().rstrip(".,")
+    """Strip legal entity suffixes (LLC, Inc., Corp...) and page-title junk.
+
+    Titles often carry taglines after a separator ("Acme, LLC—NoSEO",
+    "Acme Corp | Home", "Acme Corporation - Best Firm in NJ"), which used
+    to hide the suffix mid-string - so cut at separators first. Spaced
+    hyphens are separators; internal hyphens (Front-Line) are kept.
+    """
+    name = (name or "").strip()
+    name = re.split(r"\s*[|—–]\s*|\s+-\s+", name)[0]
+    name = name.strip().rstrip(".,|-")
     while True:
         stripped = LEGAL_SUFFIX_RE.sub("", name).strip().rstrip(".,")
         if stripped == name or not stripped:

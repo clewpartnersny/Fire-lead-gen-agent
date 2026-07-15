@@ -17,6 +17,20 @@ def test_clean_company_name():
     assert clean_company_name("") == ""
 
 
+def test_clean_company_name_title_junk():
+    # suffix hidden behind page-title separators must still be stripped
+    assert clean_company_name("R.H. Fire, LLC—NoSEO") == "R.H. Fire"
+    assert clean_company_name("Front-Line Fire Protection, LLC |") == "Front-Line Fire Protection"
+    assert clean_company_name(
+        "Costa Engineering Corporation - Best Civil Engineering Firm in New Jersey"
+    ) == "Costa Engineering"
+    assert clean_company_name("Empire State Electric Maintenance & Data Corp. |") \
+        == "Empire State Electric Maintenance & Data"
+    # internal hyphens and legit names survive
+    assert clean_company_name("Tri-State Fire & Safety") == "Tri-State Fire & Safety"
+    assert clean_company_name("Acme Fire | Sprinklers & Alarms") == "Acme Fire"
+
+
 def test_generic_emails_rejected():
     assert is_generic_email("info@acmefire.com")
     assert is_generic_email("Sales@acmefire.com")
