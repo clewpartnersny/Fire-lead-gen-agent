@@ -1,0 +1,103 @@
+# Property Management - known consolidators/acquirers (seed list; the trainer and deal watch extend it).
+consolidators:
+- name: FirstService Residential
+  sponsor: Public company (TSX/NASDAQ FSV)
+  aliases:
+  - firstservice residential
+  domains:
+  - fsresidential.com
+- name: Associa
+  sponsor: Large national consolidator
+  aliases:
+  - associa
+  domains:
+  - associaonline.com
+- name: RealManage
+  sponsor: GrowthCurve Capital
+  aliases:
+  - realmanage
+  domains:
+  - realmanage.com
+- name: PURE Property Management
+  sponsor: PE-backed serial acquirer
+  aliases:
+  - pure property management
+  domains:
+  - purepm.co
+- name: Evernest
+  sponsor: Serial acquirer
+  aliases:
+  - evernest
+  domains:
+  - evernest.co
+- name: HomeRiver Group
+  sponsor: PE-backed platform
+  aliases:
+  - homeriver
+  domains:
+  - homeriver.com
+- name: Real Property Management / Neighborly
+  sponsor: KKR (Neighborly)
+  aliases:
+  - real property management
+  - neighborly
+  domains:
+  - realpropertymgt.com
+- name: Greystar
+  sponsor: Large private manager
+  aliases:
+  - greystar
+  domains:
+  - greystar.com
+- name: CBRE
+  sponsor: Public company
+  aliases:
+  - cbre
+  domains:
+  - cbre.com
+- name: JLL
+  sponsor: Public company
+  aliases:
+  - jll
+  - jones lang lasalle
+  domains:
+  - jll.com
+- name: Cushman & Wakefield
+  sponsor: Public company
+  aliases:
+  - cushman & wakefield
+  - cushman and wakefield
+  domains:
+  - cushmanwakefield.com
+- name: Vacasa
+  sponsor: Public company (vacation rentals)
+  aliases:
+  - vacasa
+  domains:
+  - vacasa.com
+ownership_phrases:
+- portfolio company
+- private equity
+- acquired by
+- has been acquired
+- an affiliate of
+- a division of
+- a subsidiary of
+- wholly owned subsidiary
+- backed by
+- family of companies
+- part of the .* group
+- now part of
+- joined forces with
+- proud member of the .* family
+independence_phrases:
+- family owned
+- family-owned
+- locally owned
+- independently owned
+- owner operated
+- owner-operated
+- veteran owned
+- woman owned
+- second generation
+- third generation

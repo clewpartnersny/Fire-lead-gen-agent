@@ -373,6 +373,9 @@ const FACES = {
   'Rhea Kapoor':   {skin:'#C08A5F',hair:'#1E1A1F',style:'long',           shirt:'#8A5EA6',bg:'#E8DFF0'},
   'Miles Okafor':  {skin:'#7A4A2B',hair:'#1C1815',style:'short',glasses:1,shirt:'#B58329',bg:'#F0E5CF'},
   'Petra Vance':   {skin:'#EFC49E',hair:'#9A9184',style:'pixie',          shirt:'#4E8E86',bg:'#D9E9E6'},
+  'Aiden Cole':    {skin:'#D9A275',hair:'#2B2622',style:'short',          shirt:'#4C6E91',bg:'#DCE5EE'},
+  'Cole Barrett':  {skin:'#EBBA90',hair:'#6E5138',style:'buzz', beard:1,  shirt:'#8B6B43',bg:'#EFE6D6'},
+  'Priya Shah':    {skin:'#B87F52',hair:'#1B161C',style:'long', glasses:1,shirt:'#3F8578',bg:'#D9EAE6'},
 };
 function faceSVG(name){
   const f = FACES[name] || FACES['Claude'];

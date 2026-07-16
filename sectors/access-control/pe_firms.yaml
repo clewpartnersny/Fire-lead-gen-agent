@@ -1,0 +1,104 @@
+# Access Control - known consolidators/acquirers (seed list; the trainer and deal watch extend it).
+consolidators:
+- name: Convergint
+  sponsor: Ares / Leonard Green / Harvest Partners
+  aliases:
+  - convergint
+  domains:
+  - convergint.com
+- name: Securitas Technology
+  sponsor: Public company (formerly Stanley Security)
+  aliases:
+  - securitas technology
+  - stanley security
+  domains:
+  - securitastechnology.com
+- name: ADT / Everon
+  sponsor: Public / GTCR (Everon = former ADT Commercial)
+  aliases:
+  - adt commercial
+  - everon
+  domains:
+  - adt.com
+  - everonsolutions.com
+- name: Allied Universal
+  sponsor: Warburg Pincus / CDPQ
+  aliases:
+  - allied universal
+  domains:
+  - aus.com
+- name: Paladin Technologies
+  sponsor: PE-backed integrator platform
+  aliases:
+  - paladin technologies
+  domains:
+  - paladintechnologies.com
+- name: Kastle Systems
+  sponsor: PE-backed platform
+  aliases:
+  - kastle systems
+  domains:
+  - kastle.com
+- name: Pye-Barker Fire & Safety
+  sponsor: Leonard Green / Altas (expanding into security)
+  aliases:
+  - pye-barker
+  - pye barker
+  domains:
+  - pyebarkerfs.com
+- name: Sciens Building Solutions
+  sponsor: The Carlyle Group
+  aliases:
+  - sciens building solutions
+  domains:
+  - sciensbuildingsolutions.com
+- name: Prosegur
+  sponsor: Public company
+  aliases:
+  - prosegur
+  domains:
+  - prosegur.com
+- name: Vector Security
+  sponsor: Philadelphia Contributionship
+  aliases:
+  - vector security
+  domains:
+  - vectorsecurity.com
+- name: Guardian Protection
+  sponsor: Armstrong Group
+  aliases:
+  - guardian protection
+  domains:
+  - guardianprotection.com
+- name: Johnson Controls
+  sponsor: Public company
+  aliases:
+  - johnson controls
+  domains:
+  - johnsoncontrols.com
+ownership_phrases:
+- portfolio company
+- private equity
+- acquired by
+- has been acquired
+- an affiliate of
+- a division of
+- a subsidiary of
+- wholly owned subsidiary
+- backed by
+- family of companies
+- part of the .* group
+- now part of
+- joined forces with
+- proud member of the .* family
+independence_phrases:
+- family owned
+- family-owned
+- locally owned
+- independently owned
+- owner operated
+- owner-operated
+- veteran owned
+- woman owned
+- second generation
+- third generation

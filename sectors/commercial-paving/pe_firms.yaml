@@ -1,0 +1,69 @@
+# Commercial Paving - known consolidators/acquirers (seed list; the trainer and deal watch extend it).
+consolidators:
+- name: Construction Partners
+  sponsor: Public company (NASDAQ ROAD), serial acquirer
+  aliases:
+  - construction partners
+  domains:
+  - constructionpartners.net
+- name: Pave America
+  sponsor: PE-backed national paving platform
+  aliases:
+  - pave america
+  - rose paving
+  domains:
+  - paveamerica.com
+  - rosepaving.com
+- name: CRH / Oldcastle
+  sponsor: Public company
+  aliases:
+  - oldcastle
+  - crh americas
+  domains:
+  - crh.com
+  - oldcastle.com
+- name: Barrett Industries
+  sponsor: Colas Group (public)
+  aliases:
+  - barrett industries
+  - barrett paving
+  domains:
+  - barrettindustries.com
+- name: Sunland Asphalt & Construction
+  sponsor: PE-backed Southwest platform
+  aliases:
+  - sunland asphalt
+  domains:
+  - sunlandasphalt.com
+- name: Vulcan Materials
+  sponsor: Public company
+  aliases:
+  - vulcan materials
+  domains:
+  - vulcanmaterials.com
+ownership_phrases:
+- portfolio company
+- private equity
+- acquired by
+- has been acquired
+- an affiliate of
+- a division of
+- a subsidiary of
+- wholly owned subsidiary
+- backed by
+- family of companies
+- part of the .* group
+- now part of
+- joined forces with
+- proud member of the .* family
+independence_phrases:
+- family owned
+- family-owned
+- locally owned
+- independently owned
+- owner operated
+- owner-operated
+- veteran owned
+- woman owned
+- second generation
+- third generation
