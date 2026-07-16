@@ -47,6 +47,21 @@ discovery:
   use_llm_suggestions: true
   llm_suggestions_per_cycle: 10
   ignore_domains:
+  - downtobid.com
+  - bestoflongisland.com
+  - seolium.com
+  - guidetoflorida.com
+  - levelset.com
+  - inven.ai
+  - thearchitectsdiary.com
+  - texas.gov
+  - ny.gov
+  - ct.gov
+  - ca.gov
+  - ohio.gov
+  - nj.gov
+  - georgia.gov
+  - pa.gov
   - yelp.com
   - yellowpages.com
   - angi.com
@@ -88,7 +103,9 @@ discovery:
   - birdeye.com
   - expertise.com
   - threebestrated.com
-  directory_pages: []
+  directory_pages:
+  - url: https://iecne.org/members/
+    note: IEC New England electrical contractors (trainer-discovered)
 pipeline:
   industry_label: Mission-Critical Electrical
   min_ppp_loan: 150000

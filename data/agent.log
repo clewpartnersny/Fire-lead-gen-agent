@@ -1,0 +1,97 @@
+13:07:21 INFO    fire_leadgen.sheets: Writing to Google Sheet via Apps Script webhook
+13:07:21 INFO    fire_leadgen.scheduler: [Access Control] Starting 24/7 loop: 840 queries in rotation, cycle delay 300s
+started sector: Access Control
+13:07:21 INFO    fire_leadgen.pipeline: Searching: top rated access control company California
+13:07:21 INFO    fire_leadgen.sheets: Writing to Google Sheet via Apps Script webhook
+13:07:21 INFO    fire_leadgen.scheduler: [AEC] Starting 24/7 loop: 960 queries in rotation, cycle delay 300s
+started sector: AEC
+13:07:21 INFO    fire_leadgen.pipeline: Searching: MEP engineering firm New York NY
+13:07:21 INFO    fire_leadgen.sheets: Writing to Google Sheet via Apps Script webhook
+13:07:21 INFO    fire_leadgen.scheduler: [Commercial Paving] Starting 24/7 loop: 840 queries in rotation, cycle delay 300s
+started sector: Commercial Paving
+13:07:21 INFO    fire_leadgen.sheets: Writing to Google Sheet via Apps Script webhook
+13:07:21 INFO    fire_leadgen.pipeline: Searching: top rated commercial paving company California
+13:07:21 INFO    fire_leadgen.scheduler: [Fire Protection] Starting 24/7 loop: 1620 queries in rotation, cycle delay 300s
+started sector: Fire Protection
+13:07:21 INFO    fire_leadgen.pipeline: Searching: life safety inspection and testing Arizona
+13:07:21 INFO    fire_leadgen.sheets: Writing to Google Sheet via Apps Script webhook
+13:07:21 INFO    fire_leadgen.scheduler: [HVAC] Starting 24/7 loop: 1080 queries in rotation, cycle delay 300s
+started sector: HVAC
+13:07:21 INFO    fire_leadgen.pipeline: Searching: air conditioning contractor New York NY
+13:07:21 INFO    fire_leadgen.sheets: Writing to Google Sheet via Apps Script webhook
+13:07:21 INFO    fire_leadgen.scheduler: [Mission-Critical Electrical] Starting 24/7 loop: 840 queries in rotation, cycle delay 300s
+started sector: Mission-Critical Electrical
+13:07:21 INFO    fire_leadgen.pipeline: Searching: critical power systems company New York NY
+13:07:21 INFO    fire_leadgen.sheets: Writing to Google Sheet via Apps Script webhook
+13:07:21 INFO    fire_leadgen.scheduler: [Power T&D Maintenance] Starting 24/7 loop: 840 queries in rotation, cycle delay 300s
+started sector: Power T&D Maintenance
+13:07:21 INFO    fire_leadgen.sheets: Writing to Google Sheet via Apps Script webhook
+13:07:21 INFO    fire_leadgen.scheduler: [Property Management] Starting 24/7 loop: 720 queries in rotation, cycle delay 300s
+started sector: Property Management
+13:07:21 INFO    fire_leadgen.pipeline: Searching: distribution line maintenance contractor New York NY
+13:07:21 INFO    fire_leadgen.pipeline: Searching: top rated property management company California
+13:07:21 INFO    fire_leadgen.sheets: Writing to Google Sheet via Apps Script webhook
+13:07:21 INFO    fire_leadgen.scheduler: [RIA] Starting 24/7 loop: 720 queries in rotation, cycle delay 300s
+started sector: RIA
+13:07:21 INFO    fire_leadgen.pipeline: Searching: financial planning firm New York NY
+13:07:23 INFO    fire_leadgen.pipeline: Searching: best critical power systems company New York NY
+13:07:23 INFO    fire_leadgen.pipeline: Searching: family owned access control company California
+13:07:23 INFO    fire_leadgen.pipeline: Searching: best distribution line maintenance contractor New York NY
+13:07:23 INFO    fire_leadgen.pipeline: Searching: family owned property management company California
+13:07:23 INFO    fire_leadgen.pipeline: Searching: list of life safety companies Arizona
+13:07:23 INFO    fire_leadgen.pipeline: Searching: best MEP engineering firm New York NY
+13:07:23 INFO    fire_leadgen.pipeline: Searching: best financial planning firm New York NY
+13:07:24 INFO    fire_leadgen.pipeline: Searching: best air conditioning contractor New York NY
+13:07:24 INFO    fire_leadgen.pipeline: Searching: family owned commercial paving company California
+13:07:24 INFO    fire_leadgen.pipeline: Searching: life safety installation company near Arizona
+13:07:24 INFO    fire_leadgen.pipeline: Searching: independent access control company California
+13:07:25 INFO    fire_leadgen.pipeline: Searching: top rated critical power systems company New York NY
+13:07:25 INFO    fire_leadgen.pipeline: Searching: top rated distribution line maintenance contractor New York NY
+13:07:25 INFO    fire_leadgen.pipeline: Searching: top rated financial planning firm New York NY
+13:07:25 INFO    fire_leadgen.pipeline: Searching: top rated MEP engineering firm New York NY
+13:07:25 INFO    fire_leadgen.pipeline: Searching: independent property management company California
+13:07:25 INFO    fire_leadgen.pipeline: Searching: top rated air conditioning contractor New York NY
+13:07:25 INFO    fire_leadgen.pipeline: Searching: independent commercial paving company California
+13:07:26 INFO    fire_leadgen.pipeline: Searching: family owned MEP engineering firm New York NY
+13:07:26 INFO    fire_leadgen.pipeline: Searching: life safety company Colorado
+13:07:26 INFO    fire_leadgen.pipeline: Searching: list of property management company companies California
+13:07:27 INFO    fire_leadgen.pipeline: Searching: family owned critical power systems company New York NY
+13:07:27 INFO    fire_leadgen.pipeline: Searching: list of access control company companies California
+13:07:27 INFO    fire_leadgen.pipeline: Searching: family owned distribution line maintenance contractor New York NY
+13:07:27 INFO    fire_leadgen.pipeline: Searching: family owned financial planning firm New York NY
+13:07:27 INFO    fire_leadgen.pipeline: Searching: list of commercial paving company companies California
+13:07:27 INFO    fire_leadgen.pipeline: Searching: family owned air conditioning contractor New York NY
+13:07:28 INFO    fire_leadgen.pipeline: Searching: independent critical power systems company New York NY
+13:07:28 INFO    fire_leadgen.pipeline: Searching: access control company Illinois
+13:07:28 INFO    fire_leadgen.pipeline: Searching: life safety contractor Colorado
+13:07:28 INFO    fire_leadgen.pipeline: Searching: independent financial planning firm New York NY
+13:07:28 INFO    fire_leadgen.pipeline: Searching: property management company Illinois
+13:07:28 INFO    fire_leadgen.pipeline: Searching: independent distribution line maintenance contractor New York NY
+13:07:29 INFO    fire_leadgen.pipeline: Searching: independent MEP engineering firm New York NY
+13:07:29 INFO    fire_leadgen.pipeline: Searching: independent air conditioning contractor New York NY
+13:07:29 INFO    fire_leadgen.pipeline: Searching: commercial paving company Illinois
+13:07:30 INFO    fire_leadgen.pipeline: Searching: list of critical power systems company companies New York NY
+13:07:30 INFO    fire_leadgen.pipeline: Searching: life safety services Colorado
+13:07:30 INFO    fire_leadgen.pipeline: Searching: list of MEP engineering firm companies New York NY
+13:07:30 INFO    fire_leadgen.pipeline: Searching: best property management company Illinois
+13:07:30 INFO    fire_leadgen.pipeline: Searching: list of financial planning firm companies New York NY
+13:07:31 INFO    fire_leadgen.pipeline: Searching: best access control company Illinois
+13:07:31 INFO    fire_leadgen.pipeline: Searching: best commercial paving company Illinois
+13:07:31 INFO    fire_leadgen.pipeline: Searching: list of distribution line maintenance contractor companies New York NY
+13:07:31 INFO    fire_leadgen.pipeline: Searching: list of air conditioning contractor companies New York NY
+13:07:32 INFO    fire_leadgen.pipeline: Searching: top rated access control company Illinois
+13:07:32 INFO    fire_leadgen.pipeline: Searching: top rated property management company Illinois
+13:07:32 INFO    fire_leadgen.pipeline: Searching: best life safety companies Colorado
+13:07:33 INFO    fire_leadgen.pipeline: Searching: financial planning firm Long Island NY
+13:07:33 INFO    fire_leadgen.pipeline: Searching: distribution line maintenance contractor Long Island NY
+13:07:33 INFO    fire_leadgen.pipeline: Searching: MEP engineering firm Long Island NY
+13:07:33 INFO    fire_leadgen.pipeline: Searching: critical power systems company Long Island NY
+13:07:33 INFO    fire_leadgen.pipeline: Searching: air conditioning contractor Long Island NY
+13:07:34 INFO    fire_leadgen.pipeline: Searching: top rated commercial paving company Illinois
+13:07:34 INFO    fire_leadgen.pipeline: Searching: family owned access control company Illinois
+13:07:34 INFO    fire_leadgen.pipeline: Searching: best financial planning firm Long Island NY
+13:07:34 INFO    fire_leadgen.pipeline: Searching: best critical power systems company Long Island NY
+13:07:35 INFO    fire_leadgen.pipeline: Searching: best MEP engineering firm Long Island NY
+13:07:35 INFO    fire_leadgen.pipeline: Searching: family owned property management company Illinois
+13:07:35 INFO    fire_leadgen.pipeline: Searching: best air conditioning contractor Long Island NY
+13:07:35 INFO    fire_leadgen.pipeline: Searching: family owned life safety company Colorado

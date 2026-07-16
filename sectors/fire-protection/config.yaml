@@ -78,6 +78,21 @@ discovery:
   # Domains that are never company websites (directories, social,
   # marketplaces, news). Candidates from these hosts are dropped.
   ignore_domains:
+  - downtobid.com
+  - bestoflongisland.com
+  - seolium.com
+  - guidetoflorida.com
+  - levelset.com
+  - inven.ai
+  - thearchitectsdiary.com
+  - texas.gov
+  - ny.gov
+  - ct.gov
+  - ca.gov
+  - ohio.gov
+  - nj.gov
+  - georgia.gov
+  - pa.gov
     - yelp.com
     - yellowpages.com
     - angi.com
