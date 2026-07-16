@@ -1,134 +1,151 @@
-# =====================================================================
-# Private-equity screening knowledge base.
-#
-# The fire protection / life safety industry is being heavily rolled up
-# by PE-backed consolidator platforms. A company that belongs to (or was
-# acquired by) any of these is NOT independent. This seed list is based
-# on well-known platforms — verify and extend it from the research
-# manual and from acquisition news the agent surfaces over time.
-#
-# Matching: company name and website text are checked (case-insensitive)
-# against `aliases`; the company's domain is checked against `domains`.
-# =====================================================================
-
 consolidators:
-  - name: Pye-Barker Fire & Safety
-    sponsor: Leonard Green & Partners / Altas Partners
-    aliases: [pye-barker, pye barker]
-    domains: [pyebarkerfs.com, pye-barker.com]
-
-  - name: APi Group
-    sponsor: Public company (NYSE APG) - not independent
-    aliases: [api group, apigroup]
-    domains: [apigroupinc.us, apigroupcorp.com]
-
-  - name: Summit Fire & Security
-    sponsor: BlackRock Long Term Private Capital (SFP platform)
-    aliases: [summit fire & security, summit fire and security, summit companies, sfp holding]
-    domains: [summitfiresecurity.com, summit-companies.com]
-
-  - name: Impact Fire Services
-    sponsor: AE Industrial Partners
-    aliases: [impact fire]
-    domains: [impactfireservices.com]
-
-  - name: Sciens Building Solutions
-    sponsor: The Carlyle Group
-    aliases: [sciens building solutions, sciens]
-    domains: [sciensbuildingsolutions.com]
-
-  - name: Marmic Fire & Safety
-    sponsor: HGGC
-    aliases: [marmic]
-    domains: [marmic.com]
-
-  - name: Encore Fire Protection
-    sponsor: Levine Leichtman Capital Partners
-    aliases: [encore fire protection, encore fire]
-    domains: [encorefire.com]
-
-  - name: Performance Systems Integration (PSI)
-    sponsor: PE-backed platform (Pacific Northwest)
-    aliases: [performance systems integration]
-    domains: [psintegrated.com]
-
-  - name: Guardian Fire Protection Services
-    sponsor: PE-backed platform (Mid-Atlantic)
-    aliases: [guardian fire protection]
-    domains: [guardianfireprotection.com]
-
-  - name: Fortis Fire & Safety
-    sponsor: Blue Sea Capital
-    aliases: [fortis fire]
-    domains: [fortisfire.com]
-
-  - name: Cintas Fire Protection
-    sponsor: Public company (NASDAQ CTAS)
-    aliases: [cintas]
-    domains: [cintas.com]
-
-  - name: Johnson Controls
-    sponsor: Public company (NYSE JCI)
-    aliases: [johnson controls, simplexgrinnell, tyco integrated fire]
-    domains: [johnsoncontrols.com, simplexgrinnell.com]
-
-  - name: Siemens Smart Infrastructure
-    sponsor: Public company
-    aliases: [siemens]
-    domains: [siemens.com]
-
-  - name: Honeywell
-    sponsor: Public company
-    aliases: [honeywell]
-    domains: [honeywell.com]
-
-  - name: Securitas Technology / Fire
-    sponsor: Public company
-    aliases: [securitas]
-    domains: [securitastechnology.com]
-
-  - name: Convergint
-    sponsor: Ares Management / Leonard Green / Harvest Partners
-    aliases: [convergint]
-    domains: [convergint.com]
-
-  - name: VSC Fire & Security
-    sponsor: PE-backed (Southeast platform)
-    aliases: [vsc fire]
-    domains: [vscfs.com]
-
-  - name: Able Fire Prevention
-    sponsor: Multi-state consolidator (acquired Valley Fire Protection, Jul 2026)
-    aliases: [able fire prevention, valley fire protection]
-    domains: [ablefire.com]
-
-# Phrases in a company's own website text that indicate it is owned by
-# a parent/platform/sponsor (each hit is recorded as evidence).
+- name: Pye-Barker Fire & Safety
+  sponsor: Leonard Green & Partners / Altas Partners
+  aliases:
+  - pye-barker
+  - pye barker
+  - hartford sprinkler
+  domains:
+  - pyebarkerfs.com
+  - pye-barker.com
+  - hartfordsprinkler.com
+- name: APi Group
+  sponsor: Public company (NYSE APG) - not independent
+  aliases:
+  - api group
+  - apigroup
+  domains:
+  - apigroupinc.us
+  - apigroupcorp.com
+- name: Summit Fire & Security
+  sponsor: BlackRock Long Term Private Capital (SFP platform)
+  aliases:
+  - summit fire & security
+  - summit fire and security
+  - summit companies
+  - sfp holding
+  domains:
+  - summitfiresecurity.com
+  - summit-companies.com
+- name: Impact Fire Services
+  sponsor: AE Industrial Partners
+  aliases:
+  - impact fire
+  domains:
+  - impactfireservices.com
+- name: Sciens Building Solutions
+  sponsor: The Carlyle Group
+  aliases:
+  - sciens building solutions
+  - sciens
+  domains:
+  - sciensbuildingsolutions.com
+- name: Marmic Fire & Safety
+  sponsor: HGGC
+  aliases:
+  - marmic
+  domains:
+  - marmic.com
+- name: Encore Fire Protection
+  sponsor: Levine Leichtman Capital Partners
+  aliases:
+  - encore fire protection
+  - encore fire
+  domains:
+  - encorefire.com
+- name: Performance Systems Integration (PSI)
+  sponsor: PE-backed platform (Pacific Northwest)
+  aliases:
+  - performance systems integration
+  domains:
+  - psintegrated.com
+- name: Guardian Fire Protection Services
+  sponsor: PE-backed platform (Mid-Atlantic)
+  aliases:
+  - guardian fire protection
+  domains:
+  - guardianfireprotection.com
+- name: Fortis Fire & Safety
+  sponsor: Blue Sea Capital
+  aliases:
+  - fortis fire
+  domains:
+  - fortisfire.com
+- name: Cintas Fire Protection
+  sponsor: Public company (NASDAQ CTAS)
+  aliases:
+  - cintas
+  domains:
+  - cintas.com
+- name: Johnson Controls
+  sponsor: Public company (NYSE JCI)
+  aliases:
+  - johnson controls
+  - simplexgrinnell
+  - tyco integrated fire
+  domains:
+  - johnsoncontrols.com
+  - simplexgrinnell.com
+- name: Siemens Smart Infrastructure
+  sponsor: Public company
+  aliases:
+  - siemens
+  domains:
+  - siemens.com
+- name: Honeywell
+  sponsor: Public company
+  aliases:
+  - honeywell
+  domains:
+  - honeywell.com
+- name: Securitas Technology / Fire
+  sponsor: Public company
+  aliases:
+  - securitas
+  domains:
+  - securitastechnology.com
+- name: Convergint
+  sponsor: Ares Management / Leonard Green / Harvest Partners
+  aliases:
+  - convergint
+  domains:
+  - convergint.com
+- name: VSC Fire & Security
+  sponsor: PE-backed (Southeast platform)
+  aliases:
+  - vsc fire
+  domains:
+  - vscfs.com
+- name: Able Fire Prevention
+  sponsor: Multi-state consolidator (acquired Valley Fire Protection, Jul 2026)
+  aliases:
+  - able fire prevention
+  - valley fire protection
+  domains:
+  - ablefire.com
 ownership_phrases:
-  - portfolio company
-  - private equity
-  - "acquired by"
-  - "has been acquired"
-  - "an affiliate of"
-  - "a division of"
-  - "a subsidiary of"
-  - "wholly owned subsidiary"
-  - "backed by"
-  - "family of companies"
-  - "part of the .* group"
-  - "now part of"
-  - "joined forces with"
-  - "proud member of the .* family"
-
-# Phrases that suggest independence (positive signal, recorded too).
+- portfolio company
+- private equity
+- acquired by
+- has been acquired
+- an affiliate of
+- a division of
+- a subsidiary of
+- wholly owned subsidiary
+- backed by
+- family of companies
+- part of the .* group
+- now part of
+- joined forces with
+- proud member of the .* family
 independence_phrases:
-  - family owned
-  - family-owned
-  - locally owned
-  - independently owned
-  - owner operated
-  - owner-operated
-  - veteran owned
-  - woman owned
-  - second generation
-  - third generation
+- family owned
+- family-owned
+- locally owned
+- independently owned
+- owner operated
+- owner-operated
+- veteran owned
+- woman owned
+- second generation
+- third generation

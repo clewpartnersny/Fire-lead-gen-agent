@@ -1,5 +1,3 @@
-# RIA - known consolidators/acquirers (seed list; extend from
-# the sector's Buyers tab and acquisition news the agent surfaces).
 consolidators:
 - name: Focus Financial Partners
   sponsor: CD&R / Stone Point
@@ -93,6 +91,18 @@ consolidators:
   - wealthspire
   domains:
   - wealthspire.com
+- name: Caprock
+  sponsor: 'Serial acquirer (2nd deal: Venturi Private Wealth, $4B AUM)'
+  aliases:
+  - caprock
+  domains:
+  - caprockgroup.com
+- name: Sanctuary Wealth
+  sponsor: Azimut / Kennedy Lewis backed, active acquisition drive
+  aliases:
+  - sanctuary wealth
+  domains:
+  - sanctuarywealth.com
 ownership_phrases:
 - portfolio company
 - private equity

@@ -1,4 +1,3 @@
-# Property Management - known consolidators/acquirers (seed list; the trainer and deal watch extend it).
 consolidators:
 - name: FirstService Residential
   sponsor: Public company (TSX/NASDAQ FSV)
@@ -75,6 +74,12 @@ consolidators:
   - vacasa
   domains:
   - vacasa.com
+- name: Lincoln Property Company
+  sponsor: Major acquirer (bought The Spectrum Cos, Jul 2026)
+  aliases:
+  - lincoln property
+  domains:
+  - lpc.com
 ownership_phrases:
 - portfolio company
 - private equity
