@@ -48,6 +48,26 @@ function doPost(e) {
     ss.deleteSheet(target);
     return respond({ ok: true, deleted: body.worksheet });
   }
+  if (body.action === 'dedupe') {
+    // Remove rows whose key column repeats, keeping the FIRST occurrence.
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sh = ss.getSheetByName(body.worksheet || WORKSHEET);
+    if (!sh || sh.getLastRow() < 2) return respond({ ok: true, removed: 0 });
+    const values = sh.getDataRange().getValues();
+    const header = values[0].map(String);
+    const keyIdx = header.indexOf(body.key_column || 'Company - Domain');
+    if (keyIdx < 0) return respond({ ok: false, error: 'key column not found' });
+    const seen = {};
+    const toDelete = [];
+    for (let i = 1; i < values.length; i++) {
+      const k = String(values[i][keyIdx]).trim().toLowerCase();
+      if (!k) continue;
+      if (seen[k]) toDelete.push(i + 1); else seen[k] = true;
+    }
+    // delete bottom-up so row numbers stay valid
+    for (let j = toDelete.length - 1; j >= 0; j--) sh.deleteRow(toDelete[j]);
+    return respond({ ok: true, removed: toDelete.length });
+  }
   if (body.action === 'list_sheets') {
     const names = SpreadsheetApp.getActiveSpreadsheet().getSheets()
       .map(function (s) { return s.getName(); });
