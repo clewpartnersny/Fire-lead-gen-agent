@@ -14,7 +14,7 @@ enabled: true
 # Sheet output: every sector shares the spreadsheet + webhook configured
 # in .env and writes to its own worksheet (tab).
 output:
-  worksheet: Sheet1
+  worksheet: Fire
 
 discovery:
   # Query templates. {keyword} and {region} are substituted from the
