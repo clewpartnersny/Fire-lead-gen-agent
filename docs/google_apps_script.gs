@@ -39,6 +39,21 @@ function doPost(e) {
     return respond({ ok: false, error: 'bad secret' });
   }
 
+  // housekeeping actions (secret-protected)
+  if (body.action === 'delete_sheet') {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const target = ss.getSheetByName(body.worksheet || '');
+    if (!target) return respond({ ok: false, error: 'no such tab' });
+    if (ss.getSheets().length < 2) return respond({ ok: false, error: 'cannot delete the last tab' });
+    ss.deleteSheet(target);
+    return respond({ ok: true, deleted: body.worksheet });
+  }
+  if (body.action === 'list_sheets') {
+    const names = SpreadsheetApp.getActiveSpreadsheet().getSheets()
+      .map(function (s) { return s.getName(); });
+    return respond({ ok: true, sheets: names });
+  }
+
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
