@@ -103,6 +103,33 @@ consolidators:
   - sanctuary wealth
   domains:
   - sanctuarywealth.com
+- name: OneDigital
+  sponsor: Onex Partners / Ontario Teachers' Pension Plan
+  aliases:
+  - onedigital
+  - one digital
+  domains:
+  - onedigital.com
+- name: Choreo
+  sponsor: Parthenon Capital
+  aliases:
+  - choreo advisors
+  - choreo llc
+  domains:
+  - choreoadvisors.com
+- name: Aspen Standard Wealth
+  sponsor: Alpine Investors
+  aliases:
+  - aspen standard wealth
+  - aspen standard
+  domains:
+  - aspenstandardwealth.com
+- name: LPL Financial
+  sponsor: Public company (NASDAQ LPLA)
+  aliases:
+  - lpl financial
+  domains:
+  - lpl.com
 ownership_phrases:
 - portfolio company
 - private equity

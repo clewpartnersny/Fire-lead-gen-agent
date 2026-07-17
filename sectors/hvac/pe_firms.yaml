@@ -93,6 +93,12 @@ consolidators:
   - emcor
   domains:
   - emcorgroup.com
+- name: Foundral
+  sponsor: PE-backed mechanical services consolidator (acquired A. Hattersley & Sons, Jul 2026)
+  aliases:
+  - foundral
+  domains:
+  - foundral.com
 ownership_phrases:
 - portfolio company
 - private equity
