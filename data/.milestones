@@ -1,7 +1,7 @@
 fire-protection=400
 hvac=300
 aec=300
-ria=300
+ria=400
 mission-critical-electrical=200
 power-td-maintenance=200
 access-control=200
