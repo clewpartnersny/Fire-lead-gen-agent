@@ -78,6 +78,13 @@ discovery:
   # Domains that are never company websites (directories, social,
   # marketplaces, news). Candidates from these hosts are dropped.
   ignore_domains:
+  - enigma.com
+  - wa.gov
+  - maryland.gov
+  - cisleads.com
+  - diamondcertified.org
+  - easyleadz.com
+  - nytimes.com
   - downtobid.com
   - bestoflongisland.com
   - seolium.com

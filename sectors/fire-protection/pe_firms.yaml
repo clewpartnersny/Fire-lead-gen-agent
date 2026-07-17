@@ -88,14 +88,12 @@ consolidators:
   - simplexgrinnell.com
 - name: Siemens Smart Infrastructure
   sponsor: Public company
-  aliases:
-  - siemens
+  aliases: []
   domains:
   - siemens.com
 - name: Honeywell
   sponsor: Public company
-  aliases:
-  - honeywell
+  aliases: []
   domains:
   - honeywell.com
 - name: Securitas Technology / Fire

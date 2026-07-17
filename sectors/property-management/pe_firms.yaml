@@ -8,7 +8,8 @@ consolidators:
 - name: Associa
   sponsor: Large national consolidator
   aliases:
-  - associa
+  - associa community management
+  - associaonline
   domains:
   - associaonline.com
 - name: RealManage

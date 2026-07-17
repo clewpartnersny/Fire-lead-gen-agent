@@ -45,6 +45,13 @@ discovery:
   use_llm_suggestions: true
   llm_suggestions_per_cycle: 10
   ignore_domains:
+  - enigma.com
+  - wa.gov
+  - maryland.gov
+  - cisleads.com
+  - diamondcertified.org
+  - easyleadz.com
+  - nytimes.com
   - downtobid.com
   - bestoflongisland.com
   - seolium.com
