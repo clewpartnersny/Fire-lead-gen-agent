@@ -1,8 +1,8 @@
 fire-protection=400
 hvac=400
-aec=300
+aec=400
 ria=400
-mission-critical-electrical=200
+mission-critical-electrical=300
 power-td-maintenance=200
 access-control=200
 commercial-paving=200
