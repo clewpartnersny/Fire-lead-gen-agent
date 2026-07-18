@@ -126,8 +126,7 @@ consolidators:
   - aspenstandardwealth.com
 - name: LPL Financial
   sponsor: Public company (NASDAQ LPLA)
-  aliases:
-  - lpl financial
+  aliases: []
   domains:
   - lpl.com
 ownership_phrases:
