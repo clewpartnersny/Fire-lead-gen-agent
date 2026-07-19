@@ -47,6 +47,12 @@ consolidators:
   - rosendin
   domains:
   - rosendin.com
+- name: MasTec
+  sponsor: Public company (NYSE MTZ) - acquired Superior Group Jul 2026
+  aliases:
+  - mastec
+  domains:
+  - mastec.com
 ownership_phrases:
 - portfolio company
 - private equity
