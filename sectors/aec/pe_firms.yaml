@@ -101,6 +101,12 @@ consolidators:
   - ice usa
   domains:
   - ice-eng.com
+- name: BrightTree Studios
+  sponsor: Brightstar Capital Partners (architecture & design platform, Jul 2026)
+  aliases:
+  - brighttree studios
+  domains:
+  - brighttreestudios.com
 ownership_phrases:
 - portfolio company
 - private equity
