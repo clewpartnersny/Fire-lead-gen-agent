@@ -78,6 +78,15 @@ discovery:
   # Domains that are never company websites (directories, social,
   # marketplaces, news). Candidates from these hosts are dropped.
   ignore_domains:
+  - michigan.gov
+  - illinois.gov
+  - seattle.gov
+  - cornell.edu
+  - lehighvalleychamber.org
+  - rocketreach.co
+  - azbigmedia.com
+  - securityinformed.com
+  - sourcesecurity.com
   - enigma.com
   - wa.gov
   - maryland.gov
