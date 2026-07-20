@@ -23,25 +23,34 @@ discovery:
   - environmental consulting firm
   - geotechnical engineering firm
   regions:
+  - Florida
+  - Georgia
+  - Atlanta GA
+  - North Carolina
+  - South Carolina
+  - Tennessee
+  - Alabama
+  - Virginia
+  - Texas
+  - Houston TX
+  - Dallas TX
+  - Austin TX
+  - Arizona
+  - Phoenix AZ
+  - New Mexico
+  - Nevada
   - New York NY
   - Long Island NY
   - New Jersey
   - Connecticut
   - Pennsylvania
   - Massachusetts
-  - Florida
-  - Texas
   - California
   - Illinois
   - Ohio
-  - Georgia
-  - North Carolina
   - Michigan
-  - Virginia
   - Washington
-  - Arizona
   - Colorado
-  - Tennessee
   - Maryland
   results_per_query: 20
   use_places: true

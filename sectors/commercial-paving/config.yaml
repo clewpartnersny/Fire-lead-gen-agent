@@ -21,26 +21,34 @@ discovery:
   - concrete paving contractor
   - pavement marking company
   regions:
-  - New York NY
-  - Long Island NY
-  - New Jersey
-  - Connecticut
-  - Pennsylvania
-  - Massachusetts
-  - Florida
   - Texas
-  - California
-  - Illinois
-  - Ohio
-  - Georgia
-  - North Carolina
-  - Michigan
-  - Virginia
-  - Washington
-  - Arizona
+  - Houston TX
+  - Dallas TX
+  - Fort Worth TX
+  - San Antonio TX
+  - Austin TX
   - Colorado
+  - Denver CO
+  - Colorado Springs CO
+  - Georgia
+  - Atlanta GA
+  - Illinois
+  - Chicago IL
+  - Florida
+  - North Carolina
   - Tennessee
+  - Arizona
+  - Ohio
+  - Pennsylvania
+  - New Jersey
+  - New York NY
+  - Virginia
+  - California
+  - Washington
+  - Michigan
+  - Massachusetts
   - Maryland
+  - Connecticut
   results_per_query: 20
   use_places: true
   use_llm_suggestions: true
