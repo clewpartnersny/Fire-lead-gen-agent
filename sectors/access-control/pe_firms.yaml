@@ -76,6 +76,12 @@ consolidators:
   - johnson controls
   domains:
   - johnsoncontrols.com
+- name: Global GRAB Technologies
+  sponsor: Gladstone Investment (perimeter security platform, acquired RSSI Barriers Jul 2026)
+  aliases:
+  - global grab
+  domains:
+  - globalgrab.com
 ownership_phrases:
 - portfolio company
 - private equity

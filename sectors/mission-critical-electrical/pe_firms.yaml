@@ -60,6 +60,12 @@ consolidators:
   - bowe and gant
   domains:
   - bowegant.com
+- name: Centuri Holdings
+  sponsor: Public company (NYSE CTRI) - acquired J.J. White Jul 2026
+  aliases:
+  - centuri
+  domains:
+  - centuri.com
 ownership_phrases:
 - portfolio company
 - private equity

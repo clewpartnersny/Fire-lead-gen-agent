@@ -99,6 +99,12 @@ consolidators:
   - foundral
   domains:
   - foundral.com
+- name: Blue Cardinal Home Services
+  sponsor: Home-services platform (acquired D&D Plumbing Heating & Air Jul 2026)
+  aliases:
+  - blue cardinal home services
+  domains:
+  - bluecardinalhomeservices.com
 ownership_phrases:
 - portfolio company
 - private equity

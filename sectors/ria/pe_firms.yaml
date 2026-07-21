@@ -129,6 +129,18 @@ consolidators:
   aliases: []
   domains:
   - lpl.com
+- name: GCG Advisory Partners
+  sponsor: National aggregator platform (4 acquisitions H1 2026)
+  aliases:
+  - gcg advisory
+  domains:
+  - gcgadvisorypartners.com
+- name: Cary Street Partners
+  sponsor: Acquisitive RIA platform (acquired Seneca House Jul 2026)
+  aliases:
+  - cary street partners
+  domains:
+  - carystreetpartners.com
 ownership_phrases:
 - portfolio company
 - private equity
