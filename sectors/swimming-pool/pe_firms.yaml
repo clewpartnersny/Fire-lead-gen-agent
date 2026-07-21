@@ -1,0 +1,75 @@
+consolidators:
+- name: Leslie's Poolmart
+  sponsor: Public company (NASDAQ LESL)
+  aliases:
+  - leslie's pools
+  - leslies poolmart
+  domains:
+  - lesliespool.com
+- name: Pool Corporation (POOLCORP)
+  sponsor: Public company (NASDAQ POOL) - distributor
+  aliases:
+  - poolcorp
+  domains:
+  - poolcorp.com
+- name: America's Swimming Pool Company (ASP)
+  sponsor: Authority Brands franchise platform
+  aliases:
+  - america's swimming pool company
+  - asp pool
+  domains:
+  - asppoolco.com
+- name: Poolwerx
+  sponsor: Franchise platform
+  aliases:
+  - poolwerx
+  domains:
+  - poolwerx.com
+- name: Pool Scouts
+  sponsor: Buzz Franchise Brands
+  aliases:
+  - pool scouts
+  domains:
+  - poolscouts.com
+- name: Pool Troopers
+  sponsor: PE-backed pool service platform
+  aliases:
+  - pool troopers
+  domains:
+  - pooltroopers.com
+- name: Premier Pools & Spas
+  sponsor: Franchise platform
+  aliases:
+  - premier pools & spas
+  - premier pools and spas
+  domains:
+  - premierpoolsandspas.com
+- name: Latham Group
+  sponsor: Public company (NASDAQ SWIM) - manufacturer
+  aliases: []
+  domains:
+  - lathampool.com
+ownership_phrases:
+- portfolio company
+- acquired by
+- has been acquired
+- an affiliate of
+- a division of
+- a subsidiary of
+- wholly owned subsidiary
+- family of companies
+- part of the .* group
+- now part of
+- joined forces with
+- proud member of the .* family
+independence_phrases:
+- family owned
+- family-owned
+- locally owned
+- independently owned
+- owner operated
+- owner-operated
+- veteran owned
+- woman owned
+- second generation
+- third generation

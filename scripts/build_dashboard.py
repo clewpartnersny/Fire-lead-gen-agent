@@ -376,6 +376,7 @@ const FACES = {
   'Aiden Cole':    {skin:'#D9A275',hair:'#2B2622',style:'short',          shirt:'#4C6E91',bg:'#DCE5EE'},
   'Cole Barrett':  {skin:'#EBBA90',hair:'#6E5138',style:'buzz', beard:1,  shirt:'#8B6B43',bg:'#EFE6D6'},
   'Priya Shah':    {skin:'#B87F52',hair:'#1B161C',style:'long', glasses:1,shirt:'#3F8578',bg:'#D9EAE6'},
+  'Sunny Delgado': {skin:'#D9A275',hair:'#2E2118',style:'curly',          shirt:'#2E9BB5',bg:'#D6ECF2'},
 };
 function faceSVG(name){
   const f = FACES[name] || FACES['Claude'];

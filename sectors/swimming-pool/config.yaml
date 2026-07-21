@@ -1,0 +1,175 @@
+# Swimming Pool Services sector configuration (no PPP multiplier in the
+# research manual -> revenue stays blank; PPP loan/jobs still export).
+sector: Swimming Pool Services
+persona: Sunny Delgado
+enabled: true
+output:
+  worksheet: Swimming Pool
+discovery:
+  query_templates:
+  - '{keyword} {region}'
+  - best {keyword} {region}
+  - top rated {keyword} {region}
+  - family owned {keyword} {region}
+  - independent {keyword} {region}
+  - list of {keyword} companies {region}
+  keywords:
+  - swimming pool service company
+  - pool maintenance company
+  - pool cleaning company
+  - commercial pool service company
+  - pool repair and renovation company
+  - pool remodeling company
+  - swimming pool builder
+  regions:
+  - Florida
+  - Miami FL
+  - Orlando FL
+  - Tampa FL
+  - Texas
+  - Houston TX
+  - Dallas TX
+  - Austin TX
+  - Arizona
+  - Phoenix AZ
+  - California
+  - Georgia
+  - Atlanta GA
+  - North Carolina
+  - South Carolina
+  - Nevada
+  - Tennessee
+  - Virginia
+  - New York NY
+  - Long Island NY
+  - New Jersey
+  results_per_query: 20
+  use_places: true
+  ignore_domains:
+  - michigan.gov
+  - illinois.gov
+  - seattle.gov
+  - cornell.edu
+  - lehighvalleychamber.org
+  - rocketreach.co
+  - azbigmedia.com
+  - securityinformed.com
+  - sourcesecurity.com
+  - downtobid.com
+  - ct.gov
+  - enigma.com
+  - bestoflongisland.com
+  - seolium.com
+  - texas.gov
+  - ohio.gov
+  - wa.gov
+  - maryland.gov
+  - ny.gov
+  - ca.gov
+  - levelset.com
+  - georgia.gov
+  - inven.ai
+  - cisleads.com
+  - diamondcertified.org
+  - easyleadz.com
+  - nytimes.com
+  - nj.gov
+  - guidetoflorida.com
+  - yelp.com
+  - yellowpages.com
+  - angi.com
+  - angieslist.com
+  - houzz.com
+  - homeadvisor.com
+  - thumbtack.com
+  - bbb.org
+  - facebook.com
+  - instagram.com
+  - linkedin.com
+  - twitter.com
+  - x.com
+  - youtube.com
+  - wikipedia.org
+  - indeed.com
+  - glassdoor.com
+  - ziprecruiter.com
+  - mapquest.com
+  - manta.com
+  - dnb.com
+  - zoominfo.com
+  - buzzfile.com
+  - chamberofcommerce.com
+  - porch.com
+  - buildzoom.com
+  - amazon.com
+  - reddit.com
+  - nextdoor.com
+  - crunchbase.com
+  - pitchbook.com
+  - google.com
+  - superpages.com
+  - city-data.com
+  - birdeye.com
+  - expertise.com
+  - threebestrated.com
+  - poolmagazine.com
+  - poolspanews.com
+  directory_pages:
+  - url: https://www.phta.org/directory/
+    note: Pool & Hot Tub Alliance member directory
+  use_llm_suggestions: true
+  llm_suggestions_per_cycle: 10
+pipeline:
+  industry_label: Swimming Pool Services
+  min_ppp_loan: 150000
+  ppp_revenue_multiplier: null
+  min_est_revenue: 5000000
+  min_service_matches: 2
+  required_services_any:
+  - pool service
+  - pool maintenance
+  - pool cleaning
+  - pool repair
+  - pool renovation
+  - pool remodel
+  - pool construction
+  - pool builder
+  - weekly pool
+  - commercial pool
+  - pool equipment
+  exclude_if_only:
+  - software
+  - insurance
+  - attorney
+  - staffing
+  export_pe_backed: false
+  pe_news_search: true
+enrichment:
+  hunter: true
+  rocketreach: true
+  verify_emails: true
+  ppp_web: true
+  owner_titles:
+  - owner
+  - founder
+  - president
+  - ceo
+  - chief executive
+  - principal
+  - managing partner
+  - general manager
+  - vice president
+scheduler:
+  cycle_delay_seconds: 300
+  queries_per_cycle: 10
+  request_delay_seconds: 2
+  max_companies_per_cycle: 25
+storage:
+  database: data/swimming-pool.sqlite3
+  csv_fallback: out/swimming-pool.csv
+deal_watch:
+  queries:
+  - '"pool service" acquisition'
+  - '"pool company" acquired'
+  - '"pool service" "private equity"'
+  - 'swimming pool company acquisition'
