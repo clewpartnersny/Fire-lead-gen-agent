@@ -17,32 +17,71 @@ discovery:
   - swimming pool service company
   - pool maintenance company
   - pool cleaning company
+  - weekly pool service
   - commercial pool service company
-  - pool repair and renovation company
+  - pool repair company
+  - pool equipment repair company
+  - pool renovation company
   - pool remodeling company
+  - pool resurfacing company
+  - pool plastering company
   - swimming pool builder
   regions:
   - Florida
   - Miami FL
   - Orlando FL
   - Tampa FL
+  - Jacksonville FL
+  - Fort Myers FL
+  - Sarasota FL
   - Texas
   - Houston TX
   - Dallas TX
   - Austin TX
+  - San Antonio TX
   - Arizona
   - Phoenix AZ
+  - Tucson AZ
+  - New York NY
+  - Long Island NY
+  - Westchester NY
   - California
   - Georgia
   - Atlanta GA
   - North Carolina
-  - South Carolina
-  - Nevada
   - Tennessee
-  - Virginia
-  - New York NY
-  - Long Island NY
+  - Alabama
+  - Colorado
+  - Connecticut
+  - Illinois
+  - Indiana
+  - Massachusetts
+  - Maryland
+  - Maine
   - New Jersey
+  - Nevada
+  - Ohio
+  - Oregon
+  - Pennsylvania
+  - South Carolina
+  - Utah
+  - Washington
+  - Wisconsin
+  - Arkansas
+  - Idaho
+  - New Hampshire
+  - Delaware
+  - Rhode Island
+  - Michigan
+  - Virginia
+  - Washington DC
+  - New Mexico
+  - Iowa
+  - Louisiana
+  - Mississippi
+  - Kentucky
+  - Minnesota
+  - Oklahoma
   results_per_query: 20
   use_places: true
   ignore_domains:

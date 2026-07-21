@@ -49,6 +49,103 @@ consolidators:
   aliases: []
   domains:
   - lathampool.com
+- name: SPS Pool Care
+  sponsor: PE-backed platform (200+ acquisitions since 2021)
+  aliases:
+  - sps pool care
+  domains:
+  - spspoolcare.com
+- name: National Pool Partners
+  sponsor: Certus (pest-control platform; 17+ acquisitions)
+  aliases:
+  - national pool partners
+  domains:
+  - nationalpoolpartners.com
+- name: Pool Service Partners
+  sponsor: PE-backed Northeast platform (12+ acquisitions)
+  aliases:
+  - pool service partners
+  domains:
+  - poolservicepartners.com
+- name: Azureon
+  sponsor: PE-backed platform (11 acquisitions)
+  aliases:
+  - azureon
+  domains:
+  - azureon.com
+- name: Easton Select Group
+  sponsor: PE-backed high-end construction/service platform (14 acquisitions)
+  aliases:
+  - easton select
+  domains:
+  - eastonselectgroup.com
+- name: Cabana
+  sponsor: Tech-enabled roll-up (12 acquisitions)
+  aliases:
+  - cabana pools
+  domains:
+  - cabana.com
+- name: Pool Centurion
+  sponsor: PE-backed maintenance platform
+  aliases:
+  - pool centurion
+  domains:
+  - poolcenturion.com
+- name: Aquaverse (fka Yummy Pools)
+  sponsor: Trivest
+  aliases:
+  - yummy pools
+  - aquaverse pools
+  domains:
+  - yummypools.com
+- name: Poolie
+  sponsor: Likely PE-backed (per sector research)
+  aliases:
+  - poolie
+  domains:
+  - poolie.com
+- name: Riverbend Sandler Pools
+  sponsor: PE-backed builder platform (9+ acquisitions)
+  aliases:
+  - riverbend sandler
+  domains:
+  - riverbendsandler.com
+- name: Cody Pools
+  sponsor: Large builder platform ($337m revenue, 5 acquisitions)
+  aliases:
+  - cody pools
+  domains:
+  - codypools.com
+- name: MPD Pool Holdings
+  sponsor: ETA holding company (5 acquisitions)
+  aliases:
+  - mpd pool holdings
+  domains:
+  - mpdpools.com
+- name: Gold Medal Pools
+  sponsor: Builder consolidator platform
+  aliases:
+  - gold medal pools
+  domains:
+  - goldmedalpools.com
+- name: Blue Haven Pools on the Gulf
+  sponsor: Builder consolidator (Gulf region)
+  aliases:
+  - blue haven pools
+  domains:
+  - bluehaven.com
+- name: Vermana
+  sponsor: Commercial pool services platform
+  aliases:
+  - vermana
+  domains:
+  - vermana.com
+- name: Veridian Service Partners
+  sponsor: PE-backed (pool plastering and tile services)
+  aliases:
+  - veridian service partners
+  domains:
+  - veridianservicepartners.com
 ownership_phrases:
 - portfolio company
 - acquired by
