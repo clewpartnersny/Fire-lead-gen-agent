@@ -153,6 +153,12 @@ discovery:
   - threebestrated.com
   - poolmagazine.com
   - poolspanews.com
+  - thebluebook.com
+  - thomasnet.com
+  - causeiq.com
+  - clutch.co
+  - quora.com
+  - myfloridalicense.com
   directory_pages:
   - url: https://www.phta.org/directory/
     note: Pool & Hot Tub Alliance member directory

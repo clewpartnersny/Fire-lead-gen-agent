@@ -121,6 +121,12 @@ discovery:
   - birdeye.com
   - expertise.com
   - threebestrated.com
+  - thebluebook.com
+  - thomasnet.com
+  - causeiq.com
+  - clutch.co
+  - quora.com
+  - myfloridalicense.com
   directory_pages: []
 pipeline:
   industry_label: HVAC

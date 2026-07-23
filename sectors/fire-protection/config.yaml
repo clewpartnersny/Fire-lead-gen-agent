@@ -150,6 +150,12 @@ discovery:
     - birdeye.com
     - expertise.com
     - threebestrated.com
+  - thebluebook.com
+  - thomasnet.com
+  - causeiq.com
+  - clutch.co
+  - quora.com
+  - myfloridalicense.com
 
   # Industry directory / association member pages to harvest company
   # links from (manual Methods D & E). Each page is fetched ONCE and all
