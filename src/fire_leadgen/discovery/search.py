@@ -77,7 +77,16 @@ def _serpapi_search(query: str, max_results: int, key: str, http: HttpClient) ->
     return results
 
 
-def _ddg_search(query: str, max_results: int) -> list[dict]:
+# Hard wall-clock cap for a single DuckDuckGo query. The ddgs library fans
+# out across many engines (yandex, yahoo, mojeek, brave, ...) and its
+# primp-based HTTP layer has been observed to hang indefinitely on a stalled
+# connection through the proxy, which would freeze the whole sector thread.
+# We run the call on a worker thread and abandon it past this deadline so the
+# scheduler loop always makes progress.
+_DDG_TIMEOUT = 45
+
+
+def _ddg_search_raw(query: str, max_results: int) -> list[dict]:
     try:
         from ddgs import DDGS
     except ImportError:
@@ -87,15 +96,31 @@ def _ddg_search(query: str, max_results: int) -> list[dict]:
             log.error("ddgs not installed and no SERPAPI_KEY set")
             return []
     try:
+        with DDGS(timeout=_DDG_TIMEOUT) as ddgs:
+            hits = list(ddgs.text(query, max_results=max_results))
+    except TypeError:
+        # older ddgs signatures don't accept timeout=
         with DDGS() as ddgs:
             hits = list(ddgs.text(query, max_results=max_results))
-    except Exception as exc:
-        log.warning("DuckDuckGo search failed for %r: %s", query, exc)
-        return []
     return [
         {"url": h.get("href", ""), "title": h.get("title", ""), "snippet": h.get("body", "")}
         for h in hits
     ]
+
+
+def _ddg_search(query: str, max_results: int) -> list[dict]:
+    from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
+
+    with ThreadPoolExecutor(max_workers=1) as ex:
+        future = ex.submit(_ddg_search_raw, query, max_results)
+        try:
+            return future.result(timeout=_DDG_TIMEOUT + 15)
+        except FutureTimeout:
+            log.warning("DuckDuckGo search timed out for %r after %ds", query, _DDG_TIMEOUT + 15)
+            return []
+        except Exception as exc:
+            log.warning("DuckDuckGo search failed for %r: %s", query, exc)
+            return []
 
 
 def filter_candidates(results: list[dict], ignore_domains: set[str]) -> list[dict]:

@@ -78,11 +78,47 @@ def run_all(sectors_dir: str = "sectors") -> int:
 
     signal.signal(signal.SIGTERM, _stop_all)
     signal.signal(signal.SIGINT, _stop_all)
+
+    _start_stall_watchdog()
+
     for thread, lock in threads:
         while thread.is_alive():
             thread.join(timeout=5)
         lock.close()
     return 0
+
+
+def _start_stall_watchdog(stall_seconds: int = 1200, check_every: int = 30) -> None:
+    """Force-exit the process if no sector makes progress for stall_seconds.
+
+    Sector loops run on daemon threads; a hung network call (e.g. the ddgs
+    HTTP layer stalling through the proxy) can freeze a thread with no clean
+    way to interrupt it from Python. Rather than sit wedged, we os._exit(1)
+    so an external restart wrapper (run-forever.sh) brings the fleet back.
+    Every healthy sector beats once per second even while sleeping, so a
+    quiet global heartbeat means genuine wedge, not normal idle time.
+    """
+    import threading
+    import time
+
+    from .scheduler import newest_heartbeat
+
+    def _watch():
+        # grace period so heartbeats can populate before the first cycle
+        time.sleep(stall_seconds)
+        while True:
+            last = newest_heartbeat()
+            age = time.time() - last if last else 0.0
+            if last and age > stall_seconds:
+                print(
+                    f"STALL WATCHDOG: no sector progress for {int(age)}s "
+                    f"(threshold {stall_seconds}s) - exiting for restart",
+                    flush=True,
+                )
+                os._exit(1)
+            time.sleep(check_every)
+
+    threading.Thread(target=_watch, name="stall-watchdog", daemon=True).start()
 
 
 def _acquire_lock(path: str):

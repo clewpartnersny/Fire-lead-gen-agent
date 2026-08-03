@@ -16,6 +16,20 @@ from .pipeline import Pipeline
 
 log = logging.getLogger("fire_leadgen.scheduler")
 
+# Per-sector "last made progress" timestamps, bumped at the start and end of
+# every cycle. The run-all supervisor reads this to detect a global stall
+# (all sector threads wedged on a hung network call) and force a restart.
+HEARTBEATS: dict[str, float] = {}
+
+
+def beat(sector: str) -> None:
+    HEARTBEATS[sector or "?"] = time.time()
+
+
+def newest_heartbeat() -> float:
+    """Most recent heartbeat across all sectors, or 0.0 if none yet."""
+    return max(HEARTBEATS.values(), default=0.0)
+
 
 class Scheduler:
     def __init__(self, config: dict, db: Db, pipeline: Pipeline):
@@ -47,9 +61,11 @@ class Scheduler:
         return batch
 
     def run_cycle(self) -> None:
+        beat(self.sector)
         added = self.pipeline.discover(self._next_query_batch())
         processed = self.pipeline.process_new(self.cfg.get("max_companies_per_cycle", 25))
         exported = self.pipeline.export_ready()
+        beat(self.sector)
         counts = self.db.counts()
         log.info(
             "[%s] Cycle done: +%d discovered, %d processed, %d exported | totals: %s",
@@ -71,5 +87,6 @@ class Scheduler:
             for _ in range(delay):
                 if self._stop:
                     break
+                beat(self.sector)  # a healthy sleeping thread still beats
                 time.sleep(1)
         log.info("Stopped cleanly")
