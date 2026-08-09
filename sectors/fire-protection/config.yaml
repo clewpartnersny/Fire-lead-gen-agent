@@ -78,6 +78,16 @@ discovery:
   # Domains that are never company websites (directories, social,
   # marketplaces, news). Candidates from these hosts are dropped.
   ignore_domains:
+  - bizjournals.com
+  - businesswire.com
+  - prnewswire.com
+  - enr.com
+  - globalspec.com
+  - govtribe.com
+  - ensun.io
+  - aeroleads.com
+  - homeguide.com
+  - wwlp.com
   - michigan.gov
   - illinois.gov
   - seattle.gov

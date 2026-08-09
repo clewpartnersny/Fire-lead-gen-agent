@@ -85,6 +85,16 @@ discovery:
   results_per_query: 20
   use_places: true
   ignore_domains:
+  - bizjournals.com
+  - businesswire.com
+  - prnewswire.com
+  - enr.com
+  - globalspec.com
+  - govtribe.com
+  - ensun.io
+  - aeroleads.com
+  - homeguide.com
+  - wwlp.com
   - michigan.gov
   - illinois.gov
   - seattle.gov

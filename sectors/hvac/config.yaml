@@ -49,6 +49,16 @@ discovery:
   use_llm_suggestions: true
   llm_suggestions_per_cycle: 10
   ignore_domains:
+  - bizjournals.com
+  - businesswire.com
+  - prnewswire.com
+  - enr.com
+  - globalspec.com
+  - govtribe.com
+  - ensun.io
+  - aeroleads.com
+  - homeguide.com
+  - wwlp.com
   - michigan.gov
   - illinois.gov
   - seattle.gov
