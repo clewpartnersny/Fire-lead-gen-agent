@@ -45,6 +45,10 @@ discovery:
   use_llm_suggestions: true
   llm_suggestions_per_cycle: 10
   ignore_domains:
+  - virginia.gov
+  - mass.gov
+  - state.tx.us
+  - tn.gov
   - bizjournals.com
   - businesswire.com
   - prnewswire.com

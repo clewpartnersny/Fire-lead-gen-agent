@@ -85,6 +85,10 @@ discovery:
   results_per_query: 20
   use_places: true
   ignore_domains:
+  - virginia.gov
+  - mass.gov
+  - state.tx.us
+  - tn.gov
   - bizjournals.com
   - businesswire.com
   - prnewswire.com

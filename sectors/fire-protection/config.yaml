@@ -78,6 +78,10 @@ discovery:
   # Domains that are never company websites (directories, social,
   # marketplaces, news). Candidates from these hosts are dropped.
   ignore_domains:
+  - virginia.gov
+  - mass.gov
+  - state.tx.us
+  - tn.gov
   - bizjournals.com
   - businesswire.com
   - prnewswire.com
