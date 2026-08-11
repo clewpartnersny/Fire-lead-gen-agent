@@ -186,10 +186,10 @@ enrichment:
   - owner
   - partner
 scheduler:
-  cycle_delay_seconds: 45
+  cycle_delay_seconds: 90
   queries_per_cycle: 3
   request_delay_seconds: 1
-  max_companies_per_cycle: 150
+  max_companies_per_cycle: 40
 storage:
   database: data/aec.sqlite3
   csv_fallback: out/aec.csv
