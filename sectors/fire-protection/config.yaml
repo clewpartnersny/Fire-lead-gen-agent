@@ -276,7 +276,7 @@ scheduler:
   # Politeness delay between outbound HTTP requests (seconds).
   request_delay_seconds: 1
   # Max new companies fully processed (extraction+enrichment) per cycle.
-  max_companies_per_cycle: 400
+  max_companies_per_cycle: 120
 
 storage:
   database: data/fire-protection.sqlite3
