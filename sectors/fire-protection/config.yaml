@@ -269,14 +269,14 @@ enrichment:
 scheduler:
   # Seconds between full discovery cycles (one cycle = a batch of
   # queries + processing everything new that was found).
-  cycle_delay_seconds: 120
+  cycle_delay_seconds: 45
   # Queries executed per cycle (the rotation pointer persists in the DB,
   # so over many cycles every keyword x region combo is covered).
-  queries_per_cycle: 10
+  queries_per_cycle: 3
   # Politeness delay between outbound HTTP requests (seconds).
-  request_delay_seconds: 2
+  request_delay_seconds: 1
   # Max new companies fully processed (extraction+enrichment) per cycle.
-  max_companies_per_cycle: 100
+  max_companies_per_cycle: 150
 
 storage:
   database: data/fire-protection.sqlite3
