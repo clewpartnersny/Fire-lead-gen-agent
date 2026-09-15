@@ -23,22 +23,44 @@ discovery:
   - environmental consulting firm
   - geotechnical engineering firm
   regions:
+  # --- Southeast (prioritized) ---
   - Florida
+  - Miami FL
+  - Orlando FL
+  - Tampa FL
+  - Jacksonville FL
   - Georgia
   - Atlanta GA
+  - Savannah GA
   - North Carolina
+  - Charlotte NC
+  - Raleigh NC
   - South Carolina
+  - Charleston SC
+  - Greenville SC
   - Tennessee
+  - Nashville TN
+  - Memphis TN
   - Alabama
+  - Birmingham AL
   - Virginia
+  # --- Southwest (prioritized) ---
   - Texas
   - Houston TX
   - Dallas TX
   - Austin TX
+  - San Antonio TX
+  - Fort Worth TX
+  - El Paso TX
   - Arizona
   - Phoenix AZ
+  - Tucson AZ
+  - Scottsdale AZ
   - New Mexico
+  - Albuquerque NM
   - Nevada
+  - Las Vegas NV
+  # --- Other regions ---
   - New York NY
   - Long Island NY
   - New Jersey
