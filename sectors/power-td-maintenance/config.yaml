@@ -2,7 +2,7 @@
 # NOTE: Customers are utilities; Google reviews are meaningless here - size via PPP jobs/employees.
 sector: Power T&D Maintenance
 persona: Petra Vance
-enabled: true
+enabled: false
 output:
   worksheet: Power T&D
 discovery:

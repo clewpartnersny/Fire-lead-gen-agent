@@ -2,7 +2,7 @@
 # research manual -> revenue stays blank; PPP loan/jobs still export).
 sector: Swimming Pool Services
 persona: Sunny Delgado
-enabled: true
+enabled: false
 output:
   worksheet: Swimming Pool
 discovery:

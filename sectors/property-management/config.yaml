@@ -1,7 +1,7 @@
 # Property Management sector configuration (no PPP multiplier in the research manual -> revenue stays blank; PPP loan/jobs still export).
 sector: Property Management
 persona: Priya Shah
-enabled: true
+enabled: false
 output:
   worksheet: Property Management
 discovery:

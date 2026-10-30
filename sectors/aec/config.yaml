@@ -2,7 +2,7 @@
 # NOTE: Professional services: contact must be the Managing Partner/Principal, match surnames in firm name (manual).
 sector: AEC
 persona: Ava Lindqvist
-enabled: true
+enabled: false
 output:
   worksheet: AEC
 discovery:

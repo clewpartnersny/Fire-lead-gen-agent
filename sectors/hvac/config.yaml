@@ -2,7 +2,7 @@
 # NOTE: Manual: Google reviews DO matter for residential HVAC (>200 = add).
 sector: HVAC
 persona: Hank Mercer
-enabled: true
+enabled: false
 output:
   worksheet: HVAC
 discovery:

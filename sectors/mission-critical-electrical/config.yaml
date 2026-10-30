@@ -2,7 +2,7 @@
 # NOTE: Focus: electrical contractors serving data centers / critical facilities.
 sector: Mission-Critical Electrical
 persona: Miles Okafor
-enabled: true
+enabled: false
 output:
   worksheet: Mission-Critical Electrical
 discovery:

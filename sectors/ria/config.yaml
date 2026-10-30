@@ -2,7 +2,7 @@
 # NOTE: Size = AUM (from Form ADV / SEC adviserinfo.sec.gov), not PPP. Great directory: adviserinfo.sec.gov (Form ADV data is public).
 sector: RIA
 persona: Rhea Kapoor
-enabled: true
+enabled: false
 output:
   worksheet: RIA
 discovery:

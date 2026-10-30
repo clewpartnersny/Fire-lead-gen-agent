@@ -1,7 +1,7 @@
 # Access Control sector configuration (no PPP multiplier in the research manual -> revenue stays blank; PPP loan/jobs still export).
 sector: Access Control
 persona: Aiden Cole
-enabled: true
+enabled: false
 output:
   worksheet: Access Control
 discovery:

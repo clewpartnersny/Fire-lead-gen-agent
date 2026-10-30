@@ -1267,10 +1267,10 @@ enrichment:
   - general manager
   - vice president
 scheduler:
-  cycle_delay_seconds: 60
-  queries_per_cycle: 5
+  cycle_delay_seconds: 20
+  queries_per_cycle: 8
   request_delay_seconds: 1
-  max_companies_per_cycle: 120
+  max_companies_per_cycle: 200
 storage:
   database: data/commercial-paving.sqlite3
   csv_fallback: out/commercial-paving.csv
