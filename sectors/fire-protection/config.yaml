@@ -214,6 +214,16 @@ pipeline:
   # rejected - manual says not to prematurely dismiss).
   min_est_revenue: 5000000
 
+  # Minimum employee headcount to QUALIFY (hard gate, not a flag).
+  # Strict mode: a company is REJECTED unless we are confident it has at
+  # least this many employees - i.e. the confident lower bound of its size
+  # estimate must be >= this value. Companies whose headcount is unknown or
+  # whose estimate could be below the floor are rejected. Because estimated
+  # sizes are coarse buckets (1-10, 11-25, 26-50, ...), bucketed companies
+  # only pass from the 26-50 bucket up; exact SBA-PPP counts pass at >=20.
+  # Set to 0 to disable the gate.
+  min_employees: 20
+
   # A company must match at least min_service_matches of these services
   # (against website text) to qualify. One lone match (e.g. a chimney
   # sweep mentioning "fire safety") is not a fire protection company.

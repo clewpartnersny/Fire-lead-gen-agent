@@ -57,6 +57,24 @@ def _lead_source(source: str) -> str:
     return source[:40]
 
 
+def _employee_lower_bound(value) -> int | None:
+    """Confident lower bound of an employee estimate, or None if unknown.
+
+    Accepts an exact count ('45'), a size bucket ('26-50', '250+'), or ''.
+    Returns the smallest number the estimate could represent so a caller can
+    enforce a strict '>= N employees' gate: '45'->45, '26-50'->26, '11-25'->11,
+    '250+'->250, ''->None. A bucket therefore only clears a floor of 20 from
+    the 26-50 band up; '11-25' (lower bound 11) does not.
+    """
+    s = str(value or "").strip().replace("+", "")
+    if not s:
+        return None
+    if "-" in s:
+        s = s.split("-")[0]
+    digits = "".join(ch for ch in s if ch.isdigit())
+    return int(digits) if digits else None
+
+
 class Pipeline:
     def __init__(self, config: dict, db: Db, screener: PeScreener, writer: SheetWriter):
         self.cfg = config
@@ -351,6 +369,22 @@ class Pipeline:
             company.size_basis = basis
         if company.size_basis:
             notes.append(f"size basis: {company.size_basis}")
+
+        # ---- minimum-size gate (research manual: >= N employees) ---------
+        # Strict: reject unless we are confident the company meets the floor,
+        # i.e. the confident LOWER bound of its size estimate is >= min.
+        # Unknown / possibly-below-floor estimates are rejected.
+        min_emp = pcfg.get("min_employees", 0)
+        if min_emp:
+            low = _employee_lower_bound(company.employees)
+            if low is None or low < min_emp:
+                self.db.save_company(
+                    company, "rejected",
+                    f"under {min_emp} employees or size undetermined "
+                    f"(estimate: {company.employees or 'unknown'}, "
+                    f"basis: {company.size_basis or 'none'})",
+                )
+                return
 
         # manual Step 3D: very large review counts need an ownership call
         try:
