@@ -4,7 +4,44 @@ size bucket with a transparent "basis" string so a human can judge it.
 
 from __future__ import annotations
 
+import re
+
 BUCKETS = ["1-10", "11-25", "26-50", "51-100", "101-250", "250+"]
+
+# Phrases a company uses to state its own headcount on its website. These are
+# a FREE, self-reported signal (we already crawl the site), more reliable than
+# the heuristic. Each pattern must carry an employee/staff/team context so we
+# never pick up "50 years", "500 customers", "24/7", etc.
+_HEADCOUNT_PATTERNS = [
+    re.compile(r"\bteam of (?:over |more than |nearly |about |around )?(\d{1,5})\b", re.I),
+    re.compile(r"\bstaff of (?:over |more than |nearly |about |around )?(\d{1,5})\b", re.I),
+    re.compile(r"\bemploys?\s+(?:over |more than |nearly |about |approximately |around )?(\d{1,5})\b", re.I),
+    re.compile(r"\b(?:over|more than|nearly)\s+(\d{1,5})\s*(?:full[- ]time\s+)?"
+               r"(?:employees|technicians|staff|professionals|team members)\b", re.I),
+    re.compile(r"\b(\d{1,5})\s*\+?\s*(?:full[- ]time\s+)?"
+               r"(?:employees|technicians|team members|staff members|professionals)\b", re.I),
+    re.compile(r"\b(\d{1,5})[- ]person (?:team|crew|staff)\b", re.I),
+]
+
+
+def headcount_from_text(text: str) -> int | None:
+    """Largest plausible employee count a company states on its own site.
+
+    Returns an int (a confident, self-reported headcount) or None if the site
+    makes no such claim. Values outside a sane range are ignored.
+    """
+    if not text:
+        return None
+    best: int | None = None
+    for pat in _HEADCOUNT_PATTERNS:
+        for m in pat.finditer(text):
+            try:
+                n = int(m.group(1))
+            except (ValueError, IndexError):
+                continue
+            if 1 <= n <= 100000 and (best is None or n > best):
+                best = n
+    return best
 
 
 def estimate_size(

@@ -353,10 +353,19 @@ class Pipeline:
         if company.email_status:
             notes.append(company.email_status)
 
-        # ---- employees (PPP jobs > Hunter headcount > heuristics) --------
+        # ---- employees: combine all FREE online size signals -------------
+        # Priority: SBA-PPP JobsReported (gov, exact) > headcount the company
+        # states on its OWN crawled website (e.g. "team of 35", "employs 40")
+        # > Hunter headcount + on-site heuristic (team page, locations,
+        # reviews, email footprint). No paid/login-walled source (e.g.
+        # LinkedIn) is used.
+        site_headcount = size.headcount_from_text(crawl.get("text", ""))
         if company.ppp_jobs:
             company.employees = company.ppp_jobs
             company.size_basis = "PPP JobsReported"
+        elif site_headcount:
+            company.employees = str(site_headcount)
+            company.size_basis = "website-stated headcount"
         else:
             bucket, basis = size.estimate_size(
                 hunter_headcount=str(hunter_data.get("headcount", "")),
