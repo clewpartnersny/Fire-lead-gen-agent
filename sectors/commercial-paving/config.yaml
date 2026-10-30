@@ -3,7 +3,7 @@ sector: Commercial Paving
 persona: Cole Barrett
 enabled: true
 output:
-  worksheet: Commercial Paving
+  worksheet: "Asphalt Paving >20"
 discovery:
   query_templates:
   - '{keyword} {region}'
@@ -13,9 +13,16 @@ discovery:
   - independent {keyword} {region}
   - list of {keyword} companies {region}
   keywords:
+  # --- commercial asphalt paving: PRIORITY focus ---
+  - commercial asphalt paving company
+  - commercial asphalt paving contractor
+  - commercial asphalt contractor
+  - commercial parking lot paving company
+  - commercial asphalt resurfacing company
   - commercial paving company
   - asphalt paving contractor
   - parking lot paving company
+  # --- adjacent / secondary (kept, lower rotation priority) ---
   - asphalt maintenance company
   - sealcoating company
   - concrete paving contractor
@@ -1225,6 +1232,9 @@ discovery:
   directory_pages: []
 pipeline:
   industry_label: Commercial Paving
+  # Minimum employee headcount to QUALIFY (strict gate; see Fire).
+  # Rejected unless confidently >= this many employees. 0 disables.
+  min_employees: 20
   min_ppp_loan: 150000
   ppp_revenue_multiplier: null
   min_est_revenue: 5000000
