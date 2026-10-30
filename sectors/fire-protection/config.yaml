@@ -47,27 +47,121 @@ discovery:
   # scheduler rotates through combinations continuously, so a long list
   # is fine — it just takes more cycles to cover.
   regions:
+  # Full organized MSA sweep (loaded from Organized_MSAs.xlsx): 114 MSAs
+    - Birmingham AL
+    - Memphis AR
+    - Phoenix AZ
+    - Tucson AZ
+    - Los Angeles CA
+    - San Francisco-San Jose CA
+    - San Diego CA
+    - Sacramento CA
+    - Fresno CA
+    - Bakersfield CA
+    - Stockton CA
+    - Denver CO
+    - New York CT
+    - Hartford-Middletown CT
+    - Washington DC
+    - Philadelphia-Wilmington DE
+    - Miami-West Palm Beach FL
+    - Tampa Bay-Sarasota-Lakeland FL
+    - Orlando FL
+    - Jacksonville FL
+    - Fort Myers FL
+    - Atlanta GA
+    - Honolulu HI
+    - Omaha IA
+    - Boise ID
+    - Chicago IL
+    - St. Louis IL
+    - Chicago IN
+    - Cincinnati-Dayton IN
+    - Indianapolis IN
+    - Louisville IN
+    - Kansas City KS
+    - Cincinnati-Dayton KY
+    - Louisville KY
+    - New Orleans LA
+    - Baton Rouge LA
+    - Boston MA
+    - Providence MA
+    - Washington MD
+    - Philadelphia-Wilmington MD
+    - Baltimore MD
+    - Detroit MI
+    - Grand Rapids MI
+    - Minneapolis MN
+    - St. Louis MO
+    - Kansas City MO
+    - St. Louis MO
+    - St. Louis MO
+    - St. Charles MO
+    - Jefferson MO
+    - Franklin MO
+    - Warren MO
+    - Lincoln MO
+    - Memphis MS
+    - Charlotte NC
+    - Raleigh-Durham NC
+    - Virginia Beach-Norfolk-Newport News NC
+    - Greensboro-Winston-Salem NC
+    - Omaha NE
+    - New York NJ
+    - Philadelphia-Wilmington NJ
+    - Allentown NJ
+    - New York NJ
+    - Middlesex NJ
+    - Ocean NJ
+    - Monmouth NJ
+    - Mercer NJ
+    - Hunterdon NJ
+    - Morris NJ
+    - Passaic NJ
+    - Sussex NJ
+    - Bergen NJ
+    - Union NJ
+    - Hudson NJ
+    - Essex NJ
+    - Albuquerque NM
+    - Las Vegas NV
     - New York NY
-    - Long Island NY
-    - New Jersey
-    - Connecticut
-    - Pennsylvania
-    - Massachusetts
-    - Florida
-    - Texas
-    - California
-    - Illinois
-    - Ohio
-    - Georgia
-    - North Carolina
-    - Michigan
-    - Virginia
-    - Washington
-    - Arizona
-    - Colorado
-    - Tennessee
-    - Maryland
-
+    - Buffalo NY
+    - Rochester NY
+    - Albany NY
+    - Cincinnati-Dayton OH
+    - Columbus OH
+    - Cleveland-Akron-Toledo OH
+    - Oklahoma City OK
+    - Tulsa OK
+    - Portland OR
+    - New York PA
+    - Philadelphia-Wilmington PA
+    - Pittsburgh PA
+    - Allentown PA
+    - Providence RI
+    - Charlotte SC
+    - Greenville SC
+    - Columbia SC
+    - Charleston SC
+    - Nashville TN
+    - Memphis TN
+    - Knoxville TN
+    - Dallas-Fort Worth TX
+    - Houston TX
+    - San Antonio TX
+    - Austin TX
+    - El Paso TX
+    - Salt Lake City UT
+    - Washington VA
+    - Virginia Beach-Norfolk-Newport News VA
+    - Richmond VA
+    - Seattle WA
+    - Portland WA
+    - Chicago WI
+    - Minneapolis WI
+    - Milwaukee WI
+    - Washington WV
   # Max organic results to keep per search query.
   results_per_query: 20
 
