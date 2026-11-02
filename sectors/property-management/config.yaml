@@ -1,4 +1,14 @@
-# Property Management sector configuration (no PPP multiplier in the research manual -> revenue stays blank; PPP loan/jobs still export).
+# Property Management sector configuration.
+# Encodes the Prop-Mgmt TOP guide: third-party RESIDENTIAL managers with $10M+
+# revenue in the HOA/community-association, multifamily and vacation-rental
+# niches; pure-play (management as the core of revenue); commercial office/retail
+# and development-heavy firms are NOT tops. PPP is a first-pass SIZE SCREEN only:
+# PPP loan ~= 2.5x avg monthly payroll => annual payroll ~= 4.8x loan; payroll is
+# ~50-65% of revenue for a labor-heavy manager, so revenue ~= 7.4-9.6x the loan
+# ($10M revenue <-> ~$1.0-1.35M loan). min_ppp_loan / min_est_revenue only FLAG a
+# lead below target (never reject it), matching the guide's "first-pass filter,
+# not a revenue estimate" caveat (2020-21 data, $100K/employee cap, multi-entity
+# borrowing, reimbursed on-site payroll all distort it).
 sector: Property Management
 persona: Priya Shah
 enabled: false
@@ -13,12 +23,21 @@ discovery:
   - independent {keyword} {region}
   - list of {keyword} companies {region}
   keywords:
-  - property management company
-  - residential property management company
+  # Per TOP guide: third-party RESIDENTIAL managers in the three core niches
+  # (HOA/community association, multifamily, vacation rental). Commercial
+  # (office/retail) is explicitly out of scope, so no commercial keyword.
   - HOA management company
   - community association management company
-  - commercial property management firm
+  - condominium association management company
+  - homeowners association management company
+  - multifamily property management company
+  - apartment property management company
+  - vacation rental management company
+  - short term rental management company
+  - residential property management company
+  - single family rental management company
   - rental property management company
+  - property management company
   regions:
   # Full organized MSA + county sweep (Organized_MSAs.xlsx): 1103 regions
     - Birmingham AL
@@ -1224,19 +1243,39 @@ discovery:
   directory_pages: []
 pipeline:
   industry_label: Property Management
-  min_ppp_loan: 150000
-  ppp_revenue_multiplier: null
-  min_est_revenue: 5000000
+  # Size screen (SOFT flags only): $10M+ revenue target, ~$1.0M PPP-loan proxy,
+  # ~8x loan->revenue multiplier (conservative low end of the guide's 7.4-9.6x).
+  min_ppp_loan: 1000000
+  ppp_revenue_multiplier: 8.0
+  min_est_revenue: 10000000
+  # Niche/business-mix gate (HARD): a lead must hit >=2 of these residential
+  # property-management signals or it is rejected. These bias strongly toward
+  # the three core niches; commercial-only office/retail copy tends to miss them.
   min_service_matches: 2
   required_services_any:
   - property management
+  - property manager
   - hoa
+  - homeowners association
   - community association
+  - condominium association
+  - condo association
+  - association management
+  - multifamily
+  - multi-family
+  - apartment community
+  - apartment management
+  - vacation rental
+  - short-term rental
+  - short term rental
+  - residential property
+  - single-family rental
+  - single family rental
+  - rental home
+  - doors under management
+  - units under management
   - tenant
   - leasing
-  - rental
-  - property manager
-  - association management
   - landlord
   export_pe_backed: false
   pe_news_search: true
@@ -1255,6 +1294,12 @@ enrichment:
   - managing partner
   - general manager
   - vice president
+  # Prop-Mgmt specific: the state-license designated broker is often (not
+  # always) the owner; capture it so the sourcing team can confirm ownership.
+  - designated broker
+  - broker of record
+  - managing broker
+  - qualifying broker
 scheduler:
   cycle_delay_seconds: 60
   queries_per_cycle: 5
@@ -1265,7 +1310,9 @@ storage:
   csv_fallback: out/property-management.csv
 deal_watch:
   queries:
-  - property management company acquisition
-  - property management company acquired
+  - HOA management company acquisition
+  - community association management company acquired
+  - multifamily property management company acquisition
+  - vacation rental management company acquired
   - '"property management" "private equity"'
-  - HOA management company merger
+  - property management company merger
