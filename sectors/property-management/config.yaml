@@ -11,7 +11,7 @@
 # borrowing, reimbursed on-site payroll all distort it).
 sector: Property Management
 persona: Priya Shah
-enabled: false
+enabled: true
 output:
   worksheet: Property Management
 discovery:
@@ -1279,6 +1279,57 @@ pipeline:
   - landlord
   export_pe_backed: false
   pe_news_search: true
+  # Business-mix screen (TOP guide: RESIDENTIAL, pure-play only).
+  # HARD reject a site that reads clearly commercial (office/retail) with no
+  # residential signal; SOFT-flag mixed books + development/brokerage dilution.
+  business_mix_screen: true
+  residential_terms:
+  - residential
+  - resident
+  - homeowner
+  - home owner
+  - hoa
+  - homeowners association
+  - community association
+  - condominium association
+  - condo association
+  - multifamily
+  - multi-family
+  - apartment
+  - vacation rental
+  - short-term rental
+  - short term rental
+  - single-family
+  - single family
+  - rental home
+  - tenant
+  - doors under management
+  - units under management
+  - association management
+  commercial_terms:
+  - commercial real estate
+  - commercial property management
+  - office building
+  - office space
+  - retail space
+  - retail center
+  - shopping center
+  - industrial park
+  - warehouse space
+  - corporate real estate
+  dilution_terms:
+  - real estate development
+  - property development
+  - land development
+  - new development
+  - construction management
+  - general contractor
+  - general contracting
+  - design-build
+  - real estate brokerage
+  - investment sales
+  - buyer representation
+  - seller representation
 enrichment:
   hunter: true
   rocketreach: true

@@ -34,11 +34,22 @@ COMMERCIAL_HINTS = (
 )
 
 
+def _mix_counts(site_text: str, res_terms=None, com_terms=None) -> tuple[int, int]:
+    """(residential_hits, commercial_hits) counted in the site copy.
+
+    Term lists default to the module hint constants; a sector can pass its own
+    (via config) so niche vocabulary - HOA, multifamily, vacation rental - is
+    scored as residential and office/retail phrases as commercial.
+    """
+    lower = site_text.lower()
+    res = sum(lower.count(h.lower()) for h in (res_terms or RESIDENTIAL_HINTS))
+    com = sum(lower.count(h.lower()) for h in (com_terms or COMMERCIAL_HINTS))
+    return res, com
+
+
 def _customer_type(site_text: str) -> str:
     """Single verdict - whichever customer base dominates the site copy."""
-    lower = site_text.lower()
-    res = sum(lower.count(h) for h in RESIDENTIAL_HINTS)
-    com = sum(lower.count(h) for h in COMMERCIAL_HINTS)
+    res, com = _mix_counts(site_text)
     if not res and not com:
         return ""
     return "Residential" if res > com else "Commercial"
@@ -226,6 +237,42 @@ class Pipeline:
 
         company.industry = pcfg.get("industry_label", "Fire Protection")
         company.customer_type = _customer_type(crawl["text"])
+
+        # ---- business-mix screen (optional, per-sector) ------------------
+        # For sectors like Property Management whose guide targets RESIDENTIAL,
+        # pure-play firms only. Hard-reject a firm that reads clearly COMMERCIAL
+        # (office/retail) with NO residential signal at all; soft-flag a mixed
+        # book (so a human confirms residential is the revenue majority) and any
+        # development / brokerage / construction exposure (development-heavy and
+        # non-pure-play firms are not tops). Inert unless business_mix_screen is
+        # set, so other sectors are unaffected.
+        if pcfg.get("business_mix_screen"):
+            res_terms = pcfg.get("residential_terms") or None
+            com_terms = pcfg.get("commercial_terms") or None
+            res_hits, com_hits = _mix_counts(crawl["text"], res_terms, com_terms)
+            if com_hits and not res_hits:
+                self.db.save_company(
+                    company, "rejected",
+                    f"commercial/office-retail only, no residential signal "
+                    f"(commercial hits={com_hits})",
+                )
+                return
+            if com_hits and res_hits:
+                notes.append(
+                    f"VERIFY business mix: commercial exposure "
+                    f"(residential={res_hits} vs commercial={com_hits}) - "
+                    f"confirm residential is the revenue majority"
+                )
+            lower_text = crawl["text"].lower()
+            dilution = sorted(
+                t for t in pcfg.get("dilution_terms", []) if t.lower() in lower_text
+            )
+            if dilution:
+                notes.append(
+                    "VERIFY pure-play: non-management exposure ("
+                    + ", ".join(dilution)
+                    + ") - development-heavy / brokerage firms are not tops"
+                )
 
         # Google Reviews must always be populated: leads found via Maps
         # already carry it; backfill everything else via Serper /places
