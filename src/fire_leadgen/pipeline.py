@@ -86,6 +86,28 @@ def _employee_lower_bound(value) -> int | None:
     return int(digits) if digits else None
 
 
+def _size_signal(company, text: str, terms) -> str | None:
+    """A right-size indicator for a company whose exact headcount we cannot
+    confirm from website / PPP / Hunter: multiple offices, an acquisition, or
+    generational/long-tenure ownership. Returns a short human-readable reason
+    (for the notes column) or None. Lets a strict size gate keep a company that
+    is very likely in-band even though its exact count is unverified.
+    """
+    n_off = len([o for o in (getattr(company, "office_locations", "") or "").split(";") if o.strip()])
+    try:
+        n_loc = int(company.locations or 0)
+    except (ValueError, TypeError):
+        n_loc = 0
+    offices = max(n_off, n_loc)
+    if offices > 1:
+        return f"{offices} offices/locations"
+    lower = (text or "").lower()
+    for t in terms:
+        if t.lower() in lower:
+            return f'site mentions "{t}"'
+    return None
+
+
 class Pipeline:
     def __init__(self, config: dict, db: Db, screener: PeScreener, writer: SheetWriter):
         self.cfg = config
@@ -238,6 +260,23 @@ class Pipeline:
         company.industry = pcfg.get("industry_label", "Fire Protection")
         company.customer_type = _customer_type(crawl["text"])
 
+        # ---- manufacturer exclusion (service-focus only) -----------------
+        # Reject equipment MANUFACTURERS / distributors; keep service, install
+        # and inspection contractors. Only rejects when manufacturer language is
+        # present AND no contractor/service language is - so a service company
+        # that merely names the brands it installs is kept. Inert unless the
+        # sector sets exclude_manufacturers.
+        if pcfg.get("exclude_manufacturers"):
+            low_text = crawl["text"].lower()
+            manu = next((t for t in pcfg.get("manufacturer_terms", []) if t.lower() in low_text), None)
+            contr = any(t.lower() in low_text for t in pcfg.get("contractor_terms", []))
+            if manu and not contr:
+                self.db.save_company(
+                    company, "rejected",
+                    f'manufacturer/distributor, not a service contractor (matched "{manu}")',
+                )
+                return
+
         # ---- business-mix screen (optional, per-sector) ------------------
         # For sectors like Property Management whose guide targets RESIDENTIAL,
         # pure-play firms only. Hard-reject a firm that reads clearly COMMERCIAL
@@ -278,7 +317,7 @@ class Pipeline:
         # already carry it; backfill everything else via Serper /places
         # (which also returns the listing address - a location fallback).
         maps_address = ""
-        if not company.google_reviews:
+        if not company.google_reviews and not pcfg.get("lean_enrichment"):
             rating, count, maps_address = reviews.lookup_reviews(
                 company.name, company.city, company.state, self.http
             )
@@ -305,19 +344,22 @@ class Pipeline:
         company.msa = msa.assign_msa(company.city, company.state)
 
         # ---- PE / independence screening --------------------------------
-        news_fn = None
-        if pcfg.get("pe_news_search"):
-            news_fn = lambda q: search.web_search(q, 10, self.http)  # noqa: E731
-        verdict = self.screener.screen(company.name, company.domain, crawl["text"], news_fn)
-        company.pe_backed = verdict["pe_backed"]
-        company.independent = verdict["independent"]
-        company.pe_evidence = "; ".join(verdict["evidence"])[:500]
+        # Skipped in lean_enrichment mode (it costs a web search per company);
+        # independence then stays for a human to vet.
+        if not pcfg.get("lean_enrichment"):
+            news_fn = None
+            if pcfg.get("pe_news_search"):
+                news_fn = lambda q: search.web_search(q, 10, self.http)  # noqa: E731
+            verdict = self.screener.screen(company.name, company.domain, crawl["text"], news_fn)
+            company.pe_backed = verdict["pe_backed"]
+            company.independent = verdict["independent"]
+            company.pe_evidence = "; ".join(verdict["evidence"])[:500]
 
-        if company.pe_backed == "yes" and not pcfg.get("export_pe_backed"):
-            self.db.save_company(company, "rejected", "PE-backed / consolidator")
-            return
-        if company.pe_backed == "review":
-            notes.append(f"VERIFY OWNERSHIP - {company.pe_evidence}")
+            if company.pe_backed == "yes" and not pcfg.get("export_pe_backed"):
+                self.db.save_company(company, "rejected", "PE-backed / consolidator")
+                return
+            if company.pe_backed == "review":
+                notes.append(f"VERIFY OWNERSHIP - {company.pe_evidence}")
 
         # ---- PPP loan -> revenue estimate (manual Step 4) ----------------
         # local index first; then live web lookup (ProPublica/FederalPay),
@@ -359,46 +401,50 @@ class Pipeline:
             company.ppp_loan = "N/A"
 
         # ---- enrichment --------------------------------------------------
+        # Hunter domain_search is kept even in lean mode because it feeds the
+        # employee-size estimate below; the OWNER/email lookup (RocketReach etc.)
+        # is the expensive "other info" step and is skipped in lean mode.
         hunter_data = hunter.domain_search(company.domain, self.http) if ecfg.get("hunter") else {}
         if hunter_data:
             company.email = company.email or hunter_data.get("generic_email", "")
 
-        owner = owners.find_owner(
-            company.name,
-            company.domain,
-            crawl["team"],
-            hunter_data,
-            [t.lower() for t in ecfg.get("owner_titles", [])],
-            self.http,
-            use_rocketreach=bool(ecfg.get("rocketreach")),
-            use_hunter=bool(ecfg.get("hunter")),
-        )
-        company.first_name, company.last_name = split_person_name(owner["name"])
-        company.position = owner["title"]
-        company.contact_email = owner["email"]
-        company.contact_phone = owner["phone"]
-        company.owner_source = owner["source"]
-        company.linkedin_url = owner.get("linkedin_url", "")
-        if owner.get("birth_year"):
-            try:
-                company.owner_age = str(int(time.strftime("%Y")) - int(owner["birth_year"]))
-            except ValueError:
-                pass
+        if not pcfg.get("lean_enrichment"):
+            owner = owners.find_owner(
+                company.name,
+                company.domain,
+                crawl["team"],
+                hunter_data,
+                [t.lower() for t in ecfg.get("owner_titles", [])],
+                self.http,
+                use_rocketreach=bool(ecfg.get("rocketreach")),
+                use_hunter=bool(ecfg.get("hunter")),
+            )
+            company.first_name, company.last_name = split_person_name(owner["name"])
+            company.position = owner["title"]
+            company.contact_email = owner["email"]
+            company.contact_phone = owner["phone"]
+            company.owner_source = owner["source"]
+            company.linkedin_url = owner.get("linkedin_url", "")
+            if owner.get("birth_year"):
+                try:
+                    company.owner_age = str(int(time.strftime("%Y")) - int(owner["birth_year"]))
+                except ValueError:
+                    pass
 
-        # manual Step 5G: email-status labels for the sourcing team
-        if not owner["name"]:
-            company.email_status = "No Contact"
-        elif not company.contact_email:
-            company.email_status = "Needs Email"
-        elif ecfg.get("verify_emails") and ecfg.get("hunter"):
-            status = hunter.verify_email(company.contact_email, self.http)
-            if status:
-                notes.append(f"email {status} (Hunter verifier)")
-                if status == "invalid":
-                    company.contact_email = ""
-                    company.email_status = "Needs Email"
-        if company.email_status:
-            notes.append(company.email_status)
+            # manual Step 5G: email-status labels for the sourcing team
+            if not owner["name"]:
+                company.email_status = "No Contact"
+            elif not company.contact_email:
+                company.email_status = "Needs Email"
+            elif ecfg.get("verify_emails") and ecfg.get("hunter"):
+                status = hunter.verify_email(company.contact_email, self.http)
+                if status:
+                    notes.append(f"email {status} (Hunter verifier)")
+                    if status == "invalid":
+                        company.contact_email = ""
+                        company.email_status = "Needs Email"
+            if company.email_status:
+                notes.append(company.email_status)
 
         # ---- employees: combine all FREE online size signals -------------
         # Priority: SBA-PPP JobsReported (gov, exact) > headcount the company
@@ -426,21 +472,50 @@ class Pipeline:
         if company.size_basis:
             notes.append(f"size basis: {company.size_basis}")
 
-        # ---- minimum-size gate (research manual: >= N employees) ---------
-        # Strict: reject unless we are confident the company meets the floor,
-        # i.e. the confident LOWER bound of its size estimate is >= min.
-        # Unknown / possibly-below-floor estimates are rejected.
+        # ---- size-band gate (min_employees is a hard DEALBREAKER) --------
+        # A company must be CONFIDENTLY within [min_employees, max_employees]:
+        # the confident LOWER bound of its size estimate must be >= min and
+        # (when max is set) not confidently over max. If size is UNDETERMINED,
+        # reject - UNLESS size_exception_on_signals is on AND a right-size
+        # signal is present (multiple offices, an acquisition, generational
+        # ownership), in which case keep it and flag the indicator for a human.
         min_emp = pcfg.get("min_employees", 0)
-        if min_emp:
+        max_emp = pcfg.get("max_employees", 0)
+        if min_emp or max_emp:
             low = _employee_lower_bound(company.employees)
-            if low is None or low < min_emp:
-                self.db.save_company(
-                    company, "rejected",
-                    f"under {min_emp} employees or size undetermined "
-                    f"(estimate: {company.employees or 'unknown'}, "
-                    f"basis: {company.size_basis or 'none'})",
+            if low is not None:
+                if min_emp and low < min_emp:
+                    self.db.save_company(
+                        company, "rejected",
+                        f"under {min_emp} employees "
+                        f"(estimate: {company.employees}, basis: {company.size_basis or 'none'})",
+                    )
+                    return
+                if max_emp and low > max_emp:
+                    self.db.save_company(
+                        company, "rejected",
+                        f"over {max_emp} employees "
+                        f"(estimate: {company.employees}, basis: {company.size_basis or 'none'})",
+                    )
+                    return
+            else:
+                signal = _size_signal(
+                    company, crawl.get("text", ""), pcfg.get("size_signal_terms", [])
                 )
-                return
+                if pcfg.get("size_exception_on_signals") and signal:
+                    band = f"{min_emp or 1}-{max_emp or '100+'}"
+                    notes.append(
+                        f"SIZE UNCONFIRMED - kept on right-size signal: {signal} "
+                        f"(verify {band} employees via LinkedIn/site)"
+                    )
+                else:
+                    self.db.save_company(
+                        company, "rejected",
+                        f"size undetermined, no right-size signal "
+                        f"(need {min_emp or 0}-{max_emp or 'inf'} employees, "
+                        f"basis: {company.size_basis or 'none'})",
+                    )
+                    return
 
         # manual Step 3D: very large review counts need an ownership call
         try:
