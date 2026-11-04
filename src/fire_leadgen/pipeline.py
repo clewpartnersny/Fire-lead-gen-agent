@@ -277,6 +277,24 @@ class Pipeline:
                 )
                 return
 
+        # ---- core-service requirement (optional, per-sector) -------------
+        # The crawled site must contain at least one CORE service term (the
+        # defining offering) or it is rejected. Example: a commercial-asphalt-
+        # paving sector lists asphalt-PAVING phrases, so sealcoating-only,
+        # striping/maintenance-only and concrete-only firms (which never say
+        # "asphalt paving" / "asphalt overlay" / "asphalt milling" etc.) are
+        # dropped. Inert unless the sector sets require_core_services.
+        if pcfg.get("require_core_services"):
+            low_text = crawl["text"].lower()
+            core = next((t for t in pcfg.get("core_service_terms", []) if t.lower() in low_text), None)
+            if not core:
+                self.db.save_company(
+                    company, "rejected",
+                    "no core-service signal (e.g. asphalt paving); adjacent-only "
+                    "(sealcoating/striping/concrete) or off-profile",
+                )
+                return
+
         # ---- business-mix screen (optional, per-sector) ------------------
         # For sectors like Property Management whose guide targets RESIDENTIAL,
         # pure-play firms only. Hard-reject a firm that reads clearly COMMERCIAL

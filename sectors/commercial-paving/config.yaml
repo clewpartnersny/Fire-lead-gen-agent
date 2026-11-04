@@ -13,20 +13,18 @@ discovery:
   - independent {keyword} {region}
   - list of {keyword} companies {region}
   keywords:
-  # --- commercial asphalt paving: PRIORITY focus ---
+  # COMMERCIAL ASPHALT PAVING only. Parking-lot ASPHALT PAVING is in scope;
+  # sealcoating / striping / pavement-marking / concrete / maintenance-only
+  # firms are NOT (removed as keywords and hard-rejected by the core-service
+  # gate below).
   - commercial asphalt paving company
   - commercial asphalt paving contractor
   - commercial asphalt contractor
-  - commercial parking lot paving company
   - commercial asphalt resurfacing company
-  - commercial paving company
+  - commercial parking lot paving company
   - asphalt paving contractor
-  - parking lot paving company
-  # --- adjacent / secondary (kept, lower rotation priority) ---
-  - asphalt maintenance company
-  - sealcoating company
-  - concrete paving contractor
-  - pavement marking company
+  - asphalt paving company
+  - commercial paving company
   regions:
   # Full organized MSA + county sweep (Organized_MSAs.xlsx): 1103 regions
     - Birmingham AL
@@ -1239,16 +1237,37 @@ pipeline:
   ppp_revenue_multiplier: null
   min_est_revenue: 5000000
   min_service_matches: 2
+  # Narrowed to asphalt-paving signals (dropped sealcoating / parking lot /
+  # striping / concrete, which were letting adjacent-only firms qualify).
   required_services_any:
-  - paving
+  - asphalt paving
   - asphalt
-  - sealcoating
-  - parking lot
+  - paving
   - pavement
-  - striping
   - milling
   - resurfacing
-  - concrete
+  - blacktop
+  - asphalt contractor
+  # Core-service gate: the site MUST show a genuine asphalt-PAVING signal or the
+  # company is rejected. Keeps full-service asphalt pavers (incl. parking-lot
+  # paving); drops sealcoating-only, striping/maintenance-only and concrete-only
+  # firms that never describe laying asphalt.
+  require_core_services: true
+  core_service_terms:
+  - asphalt paving
+  - asphalt installation
+  - asphalt overlay
+  - asphalt resurfacing
+  - asphalt milling
+  - milling and paving
+  - hot mix asphalt
+  - hot-mix asphalt
+  - asphalt contractor
+  - blacktop paving
+  - new asphalt
+  - asphalt construction
+  - commercial asphalt paving
+  - asphalt pavement installation
   export_pe_backed: false
   pe_news_search: true
 enrichment:
